@@ -81,7 +81,7 @@ var
         // loaded from examples/
         /** @type {Array.<string>} */
         examples = [
-            "QFT_print_metafied.mc,Lisp in Life"
+            "QFT_lambda_metafied.mc,Lisp in Life"
         ];
 
 
@@ -1229,7 +1229,7 @@ var
             drawer.redraw(life.root);
 
             update_hud();
-            if (pattern_id == "QFT_print_metafied.mc") {
+            if (pattern_id == "QFT_lambda_metafied.mc") {
                 result.title = "Lisp in Life";
             }
             set_text($("pattern_name"), result.title || "no name");
