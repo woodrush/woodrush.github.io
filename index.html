@@ -3,11 +3,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Content-Style-Type" content="text/css">
-<meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
 <meta name="keyword" content="Hikaru,Ikuta">
 <title></title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
 <meta name="description" content="">
 <meta name="author" content="Hikaru Ikuta">
 <!-- Bootstrap -->
@@ -15,6 +14,7 @@
 <script src="./criticalhit/bootstrap/js/bootstrap.min.js"></script>
 <link href="./criticalhit/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="./criticalhit/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="./res/style.css" rel="stylesheet">
 
 </head>
 <body>
@@ -22,36 +22,33 @@
     <div class="navbar-inner">
       <div class="container">
         <ul class="nav">
-          <li><a href="./index.html">Home</a></li>
+          <li><a href="./index.html">Hikaru Ikuta</a></li>
           <li><a href="https://github.com/woodrush">GitHub</a></li>
         </ul>
       </div>
     </div>
   </div>
-  <div class="container">
-    <div style = "font-family:Times New Roman">
+  <div class="main">
+    <div>
     <!-- <div class="sideContainer" style="padding-left:20px; background:white;"> -->
-      <table border="0" cellpadding="7pt" cellspacing="0">
-        <tr>
-          <td height='180' align="left" valign="middle">
-            <img src="./images/profile.jpg" hspace="8pt" vspace="0" alt="Hikaru Ikuta">
-          </td>
-          <td height='128' align="left" valign="middle">
-              <h3>Hikaru Ikuta</h3>
-              Ph. D. student at the <a href="https://www.hal.t.u-tokyo.ac.jp/">Aizawa Yamasaki Lab</a><br>
-              Dept. of Information and Communication Engineering, The University of Tokyo<br>
-              7-3-1 Hongo, Bunkyo-ku, Tokyo 113-8656 JAPAN<br>
-              ikuta__hal.t.u-tokyo.ac.jp<br>
-              <br>
-              <a href="https://www.linkedin.com/in/hikaru-ikuta-a2986073/">LinkedIn</a> /
-              <a href="https://github.com/woodrush">GitHub</a> /
-              <a href="https://twitter.com/woodrush924">Twitter</a>
-              
-            <!-- </div> -->
-          </td>
-        </tr>
-      </table>
-      <h4>Research Background</h4>
+      <div class="row">
+        <div class="column1">
+          <img src="./images/profile.jpg" hspace="8pt" vspace="0" alt="Hikaru Ikuta">
+        </div>
+        <div class="column2">
+          <h2>Hikaru Ikuta</h2>
+          Ph.D. student at the <a href="https://www.hal.t.u-tokyo.ac.jp/">Aizawa Yamasaki Lab</a><br>
+          Dept. of Information and Communication Engineering, The University of Tokyo<br>
+          7-3-1 Hongo, Bunkyo-ku, Tokyo 113-8656 JAPAN<br>
+          ikuta__hal.t.u-tokyo.ac.jp<br>
+          <br>
+          <a href="https://www.linkedin.com/in/hikaru-ikuta-a2986073/">LinkedIn</a> /
+          <a href="https://github.com/woodrush">GitHub</a> /
+          <a href="https://twitter.com/woodrush924">Twitter</a>
+        </div>
+      </div>
+
+      <h3>Research Background</h3>
       Current research interests:
       <ul>
         <li>Machine Learning, Image Processing, Image Synthesis</li>
@@ -62,7 +59,7 @@
         <li>Systems biology</li>
         <li>Nonlinear dynamical systems and bifurcation theory</li>
       </ul>
-      <h4>Publications</h4>
+      <h3>Publications</h3>
       <ul>
         <li><b>H. Ikuta</b>, K. Ogaki, and Y. Odagiri,
           "Blending Texture Features from Multiple Reference Images for Style Transfer,"
@@ -89,13 +86,13 @@
         </li>
       </ul>
 
-      <h4>Education</h4>
+      <h3>Education</h3>
       <ul>
         <li>Master of Information Science and Technology, The University of Tokyo, Spring 2017</li>
         <li>Bachelor of Engineering, Keio University, Spring 2015</li>
       </ul>
 
-      <h4>Work and Training Experience</h4>
+      <h3>Professional Experience</h3>
       <ul>
         <li><b>Research Intern</b>, <i>Adobe,</i> Remotely from Tokyo, Japan, (with a team in San Jose, CA, U.S.A.) <i>Jun. 2020 - Aug. 2020.</i></li>
         <li><b>Research Intern</b>, <i>Microsoft Corporation,</i> Tokyo, Japan, <i>Mar. 2019 - Nov. 2019.</i></li>
@@ -107,7 +104,7 @@
         <li><b>Science and Mathematics Tutor</b>, <i>Gakken Educational.</i>, Yokohama, Japan, <i>Mar. 2010 - May 2013.</i></li>
       </ul>
 
-      <h4>Teaching Experience</h4>
+      <h3>Teaching Experience</h3>
       <ul>
         <li><b>Teaching Assistant: Lab Class</b> (junior-level, 4 students), <i>Sep. 2015 - Dec. 2016</i>.<br>
           Led two types of lab classes, of circuit theory (implementation of op-amp circuits) and control theory (stabilizing an inverse pendulum) for junior students. Lectured control theory and circuit theory.</li>
@@ -119,11 +116,68 @@
           Planned course materials to implement a multiagent system. Lectured control theory, circuit theory, programming and implementation.</li>
       </ul>
 
-      <h4>Projects</h4>
+      <h3>Projects</h3>
+      <h4>Lisp in Life (2021)</h4>
+      <div align="center">
+        <!-- <div style="max-width: 700px;"> -->
+          <span style="white-space:nowrap;">
+            <a href="https://github.com/woodrush/lisp-in-life/blob/main/img/ss2.png">
+              <img src="./lisp-in-life/res/ss2.png" width="50%">
+            </a>
+            <a href="https://github.com/woodrush/lisp-in-life/blob/main/img/ss4.png">
+              <img src="./lisp-in-life/res/ss4.png" width="50%">
+            </a>
+          </span>
+          <br>
+          <a href="https://github.com/woodrush/lisp-in-life/blob/main/img/build-flow.png">
+            <img src="./lisp-in-life/res/build-flow.png" width="100%">
+          </a>
+        <!-- </div> -->
+      </div>
+      Lisp in Life is a Lisp interpreter implemented in Conway's Game of Life.<br>
+      <br>
+      Creating the final pattern involved optimizations in every layer of the project, such as the C compiler, CPU architecture, assembly optimization, optimizing the Lisp interpreter, etc.<br>
+      <br>
+      The entire pattern can be viewed here: <a href="https://woodrush.github.io/lisp-in-life/">https://woodrush.github.io/lisp-in-life/</a><br>
+      GitHub repo: <a href="https://github.com/woodrush/lisp-in-life">https://github.com/woodrush/lisp-in-life</a><br>
+      <br>
+      <br>
+      <h4>Blending Texture Features from Multiple Reference Images for Style Transfer</h4>
+      <div align="center">
+        <div style="max-width: 400px;">
+          <a href="https://dmv.nico/ja/casestudy/neural_style_synthesizer/"><img src="./res/siggraph-asia-2016.png"></a><br>
+        </div>
+      </div>
+      <br>
+      This work extends the Neural Style Transfer method proposed by <a href="http://arxiv.org/abs/1508.06576"></a>L. A. Gatys, et al., 2015</a>, so that the color distribution is preserved after style transfer.
+      Further details are available at the <a href="https://dmv.nico/ja/casestudy/neural_style_synthesizer/">Project Website</a>.<br>
+      <br>
+      Citation:
       <ul>
-        <li>
-          <a href="https://github.com/woodrush/lisp-in-life">Lisp in Life</a> - Lisp interpreter implemented in Conway's Game of Life (2021)
+        <li><b>H. Ikuta</b>, K. Ogaki, and Y. Odagiri,
+          "Blending Texture Features from Multiple Reference Images for Style Transfer,"
+          <i>ACM SIGGRAPH Asia Technical Briefs, </i>
+          Article No. 15,
+          2016. 
+          <a href="https://dmv.nico/ja/casestudy/neural_style_synthesizer/" target="_blank">[Project Website]</a>
         </li>
+      </ul>
+      <br>
+      <h4>Growth - Yet Another Obfuscated MATLAB Code (2014)</h4>
+      <div align="center">
+        <div style="max-width: 400px;">
+          <img src="./res/growth.jpg"><br>
+        </div>
+      </div>
+      <br>
+      This is a project inspired by <a href="http://www.ioccc.org/">The International Obfuscated C Code Contest</a>.
+      When the code in the bottom left is run on MATLAB, it produces a figure that looks the same as its code, as shown on the top right of the image above.
+      It was introduced on the MathWorks Blog as the <a href="https://blogs.mathworks.com/pick/2014/12/12/obfuscated-matlab-code/">File Exchange Pick of the Week</a> - Thank you for the nice hat and t-shirt! :)
+      The code and the implementation details are available <a href="https://jp.mathworks.com/matlabcentral/fileexchange/48644-growth-yet-another-obfuscated-matlab-code">here</a>.
+      <br>
+      <br>
+      <h4>Other Projects:</h4>
+      <ul>
         <li>
           <a href="https://github.com/woodrush/neural-art-tf">"A Neural Algorithm of Artistic Style" in TensorFlow</a> - Implementation of the paper by L. A. Gatys, et al., 2015 (<a href="http://arxiv.org/abs/1508.06576">http://arxiv.org/abs/1508.06576</a>) (2015)
         </li>
@@ -133,15 +187,6 @@
           </a>
            - My final assignment for the <a href="http://www.ci.i.u-tokyo.ac.jp/~hachisuka/rend2015/" target="_blank">Realistic Image Synthesis</a> class
           (2015)
-        </li>
-        <li>
-         <a href="http://blogs.mathworks.com/pick/2014/12/12/obfuscated-matlab-code/">
-            Growth - Yet another Obfuscated MATLAB code
-          </a>
-           - Introduced on the MathWorks Blog as the 
-            MATLAB Central Pick of the Week
-          (Thank you for the nice hat and t-shirt! :)
-          (2014)
         </li>
         <li>
           <a href="http://arx.appi.keio.ac.jp/2014/04/23/%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%83%86%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E6%8A%80%E6%B3%95%E4%BB%A3%E8%A1%A8%E8%80%85%E7%99%BA%E8%A1%A8%E4%BC%9A/">
