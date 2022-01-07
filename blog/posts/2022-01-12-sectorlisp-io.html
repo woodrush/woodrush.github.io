@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Adding I/O Features to SectorLISP | Woodrush’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Adding I/O Features to SectorLISP" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Supporting interactive programs in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project." />
+<meta property="og:description" content="Supporting interactive programs in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project." />
+<link rel="canonical" href="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html" />
+<meta property="og:url" content="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html" />
+<meta property="og:site_name" content="Woodrush’s Blog" />
+<meta property="og:image" content="https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-01-12T11:01:35+09:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png" />
+<meta property="twitter:title" content="Adding I/O Features to SectorLISP" />
+<script type="application/ld+json">
+{"datePublished":"2022-01-12T11:01:35+09:00","description":"Supporting interactive programs in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project.","@type":"BlogPosting","dateModified":"2022-01-12T11:01:35+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html"},"url":"https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html","image":"https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png","headline":"Adding I/O Features to SectorLISP","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/main.css">
+  
+    
+    <link rel="stylesheet" href="/blog/assets/css/sectorlisp-highlight.css">
+    
+  <link type="application/atom+xml" rel="alternate" href="https://woodrush.github.io/blog/feed.xml" title="Woodrush's Blog" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Woodrush&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+
+        <div class="trigger">
+          <a class="page-link" href="https://woodrush.github.io/">Home</a>
+        </div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Adding I/O Features to SectorLISP</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2022-01-12T11:01:35+09:00" itemprop="datePublished">Jan 12, 2022
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic.lisp"><img src="/blog/assets/posts/2022-01-12/ss4.png" alt="A screenshot of a BASIC interpreter written for SectorLISP." /></a></p>
+
+<p><a href="https://justine.lol/sectorlisp2/">SectorLISP</a> is an amazing project
+where a fully functional Lisp interpreter is fit into the 512 bytes of the boot sector of a floppy disk.
+Since it works as a boot sector program, the binary can be written to a disk to be used as a boot drive,
+where the computer presents an interface for writing and evaluating Lisp programs,
+all running in the booting phase of bare metal on the 436-byte program.
+As it hosts the Turing-Complete language of Lisp,
+I was in fact able to write a <a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic.lisp">BASIC interpreter</a>
+in 120 lines of SectorLISP code, which evaluates BASIC programs embedded as an expression within the Lisp code,
+shown in the screenshot above.</p>
+
+<p>When I first saw SectorLISP and got it to actually run on my machine,
+I was struck with awe by how such a minimal amount of machine code could be used to open up the vast ability to
+host an entire programming language.
+You can write clearly readable programs which the interpreter will accurately evaluate to the correct result.
+I find it beautiful how such a small program is capable of interpreting a form of human thought
+and generating a sensible response that contains the meaning encapsulated in the inquired statement.</p>
+
+<h2 id="the-issue---designing-interactions">The Issue - Designing Interactions</h2>
+<p>After writing various programs for SectorLISP, there was a particular thought that came into my mind.
+Even after writing the BASIC interpreter, I felt that there was one very important feature that could significantly enhance the capabilities of SectorLISP -
+that is, the ability to <em>accept feedback</em> from the user depending on the program’s output,
+by <em>designing the interaction</em> between the user and the computer.</p>
+
+<p>The prime example of this is games.
+Games are possible to be played on a computer since the player can react <em>depending on</em> the output of the computer.
+Of course, even with pure functions as in SectorLISP,
+it’s still possible to create a game if we make the user of the program run the same program again
+every time the program demands a new input.
+The entire history of user inputs can be expressed as a certain list in the program,
+and the input and output states can be passed through the course of the entire program,
+and the program can stop whenever a required input is not apparent, also showing its accumulated outputs.
+However, such an interface that requires repeated inputs is rather inconvenient for the user,
+inconvenient in the same sense that <code class="language-html highlighter-rouge">IF</code> is inconvenient than <code class="language-html highlighter-rouge">COND</code>,
+and how lambdas that can take only one argument are inconvenient than lambdas that can take any number of arguments,
+both being used to make the experience of the humans interacting with SectorLISP as simple and natural as possible.</p>
+
+<p>When you think about it, the reason why computers are such a powerful device
+used almost everywhere in our lives today,
+is because they can be <em>redesigned</em> into an entirely different tool for an arbitrary purpose.
+The computer is then no longer a tool that is used only by the programmer,
+but can be used by <em>anybody</em> to run its applications.
+The transition from ENIAC to the dawn of the personal computing era
+was possible since computers became capable of general tasks other than computing equations,
+such as writing and saving documents for a business.
+Today, computers are being used for creating artwork,
+for playing games, for communicating with others, to only give a few examples.
+The entire history of computers is shaped by what new tasks computers became capable of,
+which is inseparable from the means of interaction between the human and the computer.</p>
+
+<p>At the heart of the diverse applications for computers is the language used to program them.
+This is why programming languages capable of designing interactions are special -
+once a computer is programmed, it can leave the hands of the programmer
+and lie in the hands of the user, who interacts with it in a newly designed way.</p>
+
+<p>As a matter of fact, all of the other languages mentioned in the <a href="https://justine.lol/sectorlisp2/">SectorLISP blog post</a> support an I/O functionality.
+<a href="https://github.com/cesarblum/sectorforth">SectorFORTH</a> has the <code class="language-html highlighter-rouge">key</code> and <code class="language-html highlighter-rouge">emit</code> instructions which reads a keystroke from the user and prints a character to the console.
+<a href="https://github.com/nanochess/bootBASIC">BootBasic</a> has the instructions <code class="language-html highlighter-rouge">input</code> and <code class="language-html highlighter-rouge">print</code> where <code class="language-html highlighter-rouge">input</code> stores a user input to a variable.
+Even BF has the instructions <code class="language-html highlighter-rouge">,</code> and <code class="language-html highlighter-rouge">.</code> capable of designing arbitrary user text input and output.
+<a href="https://github.com/rdebath">@rdebath</a> has in fact made a <a href="https://github.com/rdebath/LostKingdom">text adventure game written entirely in BF</a>.</p>
+
+<p>Although the goal of SectorLISP is set in the realm of pure functions,
+I thought that it would be a massive gain if it were able to handle I/O and still have a smaller program size
+than the other languages mentioned in the SectorLISP blog post.
+In the context of comparing the binary footprint of programs,
+it would be a better comparison if all of the programs under discussion had even more functionalities in common.
+All of this could be achieved if we could construct a version of SectorLISP that is capable of handling user input and outputs
+that still has a small program size.</p>
+
+<h2 id="the-solution">The Solution</h2>
+<p>What could we do to empower SectorLISP with the puzzle piece of interaction?
+What is a natural way of implementing I/O?
+To answer this, I created a fork of SectorLISP that supports two new special forms,
+<code class="language-html highlighter-rouge">READ</code> and <code class="language-html highlighter-rouge">PRINT</code>. These two special forms are the counterparts for the <code class="language-html highlighter-rouge">,</code> and <code class="language-html highlighter-rouge">.</code> instructions in BF.
+<code class="language-html highlighter-rouge">READ</code> accepts an arbitrary S-Expression from the user, and <code class="language-html highlighter-rouge">PRINT</code> prints the value of the evaluated argument to the console.
+<code class="language-html highlighter-rouge">PRINT</code> also prints a newline when called with no arguments as <code class="language-html highlighter-rouge">(PRINT)</code>.</p>
+
+<p>The fork is available here: <a href="https://github.com/woodrush/sectorlisp/tree/io">https://github.com/woodrush/sectorlisp/tree/io</a></p>
+
+<p>Adding all of these features only amounted to an extra 35 bytes of the binary,
+with a total of 469 bytes, or 471 bytes including the boot signature.
+This is still 22 bytes or more smaller than the two former champions of minimal languages that fit in a boot sector mentioned in the <a href="https://justine.lol/sectorlisp2/">SectorLISP blog post</a>,
+which are <a href="https://github.com/cesarblum/sectorforth">SectorFORTH</a> (491 bytes) and <a href="https://github.com/nanochess/bootBASIC">BootBasic</a> (510 bytes).
+The rather minimal increase was achievable since most of the code for handling input and output were already available from the REPL’s functionality.
+This fork successfully shows that adding an I/O feature to SectorLISP
+will still allow it to have a smaller binary footprint than the two former champions.</p>
+
+<h2 id="usage">Usage</h2>
+<p>To run the SectorLISP fork, first <code class="language-html highlighter-rouge">git clone</code> and <code class="language-html highlighter-rouge">make</code> SectorLISP’s binary, <code class="language-html highlighter-rouge">sectorlisp.bin</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>git clone https://github.com/woodrush/sectorlisp
+<span class="nb">cd </span>sectorlisp
+git checkout io
+make
+</code></pre></div></div>
+
+<p>This will generate <code class="language-html highlighter-rouge">sectorlisp.bin</code> under <code class="language-html highlighter-rouge">./sectorlisp</code>.</p>
+
+<p>To run SectorLISP on the i8086 emulator <a href="https://justine.lol/blinkenlights/">Blinkenlights</a>,
+first follow the instructions on its <a href="https://justine.lol/blinkenlights/download.html">download page</a>
+and get the latest version:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>curl https://justine.lol/blinkenlights/blinkenlights-latest.com <span class="o">&gt;</span>blinkenlights.com
+<span class="nb">chmod</span> +x blinkenlights.com
+</code></pre></div></div>
+
+<p>You can then run SectorLISP by running:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>./blinkenlights.com <span class="nt">-rt</span> sectorlisp.bin
+</code></pre></div></div>
+
+<p>In some cases, there might be a graphics-related error showing and the emulator may not start.
+In that case, run the following command first available on the download page:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="nb">sudo </span>sh <span class="nt">-c</span> <span class="s2">"echo ':APE:M::MZqFpD::/bin/sh:' &gt;/proc/sys/fs/binfmt_misc/register"</span>
+</code></pre></div></div>
+
+<p>Running this command should allow you to run Blinkenlights on your terminal.</p>
+
+<p>After starting Blinkenlights,
+expand the size of your terminal large enough so that the <code class="language-html highlighter-rouge">TELETYPEWRITER</code> region shows up
+at the center of the screen.
+This region is the console used for input and output.
+Then, press <code class="language-html highlighter-rouge">c</code> to run the emulator in continuous mode.
+The cursor in the <code class="language-html highlighter-rouge">TELETYPEWRITER</code> region should move one line down.
+Afterwards, you can start typing in text or paste a long code from your terminal into Blinkenlight’s console
+to run your Lisp program.</p>
+
+<h3 id="running-on-physical-hardware">Running on Physical Hardware</h3>
+<p>You can also run SectorLISP on an actual physical machine, if you have a PC with an Intel CPU that boots with a BIOS,
+and any type of drive such as a USB drive or a floppy disk that can be used as a boot drive.
+First, mount your drive to the PC you’ve built sectorlisp.bin on, and check:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>lsblk <span class="nt">-o</span> KNAME,TYPE,SIZE,MODEL
+</code></pre></div></div>
+
+<p>Among the list of the hardware, check for the device name for your drive you want to write SectorLISP onto.
+After making sure of the device name, run the following command, replacing <code class="language-html highlighter-rouge">[devicename]</code> with your device name.
+<code class="language-html highlighter-rouge">[devicename]</code> should be values such as <code class="language-html highlighter-rouge">sda</code> or <code class="language-html highlighter-rouge">sdb</code>, depending on your setup.</p>
+
+<p><strong>Caution:</strong> The following command used for writing to the drive
+will overwrite anything that exists in the target drive’s boot sector,
+so it’s important to make sure which drive you’re writing into.
+If the command or the device name is wrong,
+it may overwrite the entire content of your drive or other drives mounted in your PC,
+probably causing your computer to be unbootable.
+Please perform these steps with extra care, and at your own risk.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="nb">sudo dd </span><span class="k">if</span><span class="o">=</span>sectorlisp.bin <span class="nv">of</span><span class="o">=</span>/dev/[devicename] <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">count</span><span class="o">=</span>1
+</code></pre></div></div>
+
+<p>After you have written your boot drive, insert the drive to the PC you want to boot it from.
+You may have to change the boot priority settings from the BIOS to make sure the PC boots from the target drive.
+When the drive boots successfully, you should see a cursor blinking in a blank screen,
+which indicates that you’re ready to type your Lisp code into bare metal.</p>
+
+<!-- Here is a picture of it running on my machine:
+
+[![A screenshot of SectorLISP running on a physical machine.](/blog/assets/posts/2022-01-12/ss5.jpg)](/blog/assets/posts/2022-01-12/ss5.jpg) -->
+
+<h2 id="applications">Applications</h2>
+<p>Here we present examples to showcase the capabilities of <code class="language-html highlighter-rouge">READ</code> and <code class="language-html highlighter-rouge">PRINT</code>.</p>
+
+<h3 id="games">Games</h3>
+<p>A major example of interactive programs is games.
+I created a simple number guessing game that works on the fork of SectorLISP.</p>
+
+<p>Here is a screenshot of the game in action, run in <a href="https://justine.lol/blinkenlights/">Blinkenlights</a>:</p>
+
+<p><a href="/blog/assets/posts/2022-01-12/ss2.png"><img src="/blog/assets/posts/2022-01-12/ss2.png" alt="A screenshot of SectorLISP running a number guessing game" /></a></p>
+
+<p>Here is the text shown in the console:</p>
+
+<pre style="font-size:0.9em">
+(LET ' S PLAY A NUMBER GUESSING GAME. I ' M THINKING OF A CERTAIN NUMBER BETWEEN
+ 1 AND 10. SAY A NUMBER, AND I ' LL TELL YOU IF IT ' S LESS THAN, GREATER THAN,
+OR EQUAL TO MY NUMBER. CAN YOU GUESS WHICH NUMBER I ' M THINKING OF?)
+(PLEASE INPUT YOUR NUMBER IN UNARY. FOR EXAMPLE, 1 IS (*) , 3 IS (* * *) , ETC.)
+NUMBER&gt;(* * *)
+(YOUR GUESS IS LESS THAN MY NUMBER.)
+NUMBER&gt;*
+(PLEASE INPUT YOUR NUMBER IN UNARY. FOR EXAMPLE, 1 IS (*) , 3 IS (* * *) , ETC.)
+NUMBER&gt;(* * * * * * * *)
+(YOUR GUESS IS GREATER THAN MY NUMBER.)
+NUMBER&gt;
+</pre>
+
+<p>We can see that the game is able to produce interactive outputs based on the feedback from the user,
+which is an essential feature for creating games.
+Note that there is also robust input handling in action,
+where in the second input <code class="language-html highlighter-rouge">NUMBER&gt;*</code>, the user writes an invalid input <code class="language-html highlighter-rouge">*</code>, which is not a list.
+The game can handle such inputs without crashing.</p>
+
+<p>The code is available at <a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/number-guessing-game.lisp">https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/number-guessing-game.lisp</a>.</p>
+
+<h3 id="extended-lisp-repl---transforming-the-language-itself">Extended Lisp REPL - Transforming the Language Itself</h3>
+<p>The I/O feature can be used to transform the SectorLISP language itself as well.
+As an example, I made an extended Lisp REPL where <code class="language-html highlighter-rouge">macro</code>, <code class="language-html highlighter-rouge">define</code>, <code class="language-html highlighter-rouge">progn</code>,
+as well as <code class="language-html highlighter-rouge">print</code> and <code class="language-html highlighter-rouge">read</code> are all implemented as new special forms.</p>
+
+<p>Here is an example session of the program:</p>
+
+<pre><code class="language-txt">REPL&gt;(define defmacro (quote (macro (name vars body)
+       (` (define (~ name) (quote (macro (~ vars) (~ body))))))))
+=&gt;(macro (name vars body) (` (define (~ name) (quote (macro (~ vars) (~ body))))
+))
+
+REPL&gt;(defmacro repquote (x)
+       (` (quote ((~ x) (~ x)))))
+=&gt;(macro (x) (` (quote ((~ x) (~ x)))))
+
+REPL&gt;(repquote (1 2 3))
+=&gt;((1 2 3) (1 2 3))
+
+REPL&gt;
+</code></pre>
+
+<p>The code is available at <a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/repl-macro-define.lisp">https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/repl-macro-define.lisp</a>.</p>
+
+<p>In the example above, the user first uses the backquote macro <code class="language-html highlighter-rouge">`</code> to define <code class="language-html highlighter-rouge">defmacro</code> as a new macro,
+then uses <code class="language-html highlighter-rouge">defmacro</code> to define a new macro <code class="language-html highlighter-rouge">repquote</code>.
+These newly added features allow an interaction that is much more closer to those in modern Lisp dialects.</p>
+
+<p>In the <a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/repl-macro-define.lisp">code</a>,
+these additional user inputs are included at the end of the code which could be directly pasted in the console.
+However, we could look at this in another way - by writing the REPL code as the header,
+we have effectively transformed the <em>syntax of the language itself</em>, by introducing new special forms
+which were not present in the original interface.
+The <code class="language-html highlighter-rouge">DEFINE</code> special form is also introduced in SectorLISP’s <a href="https://github.com/jart/sectorlisp/tree/friendly">friendly branch</a>,
+which adds some extra bytes.
+With <code class="language-html highlighter-rouge">READ</code> and <code class="language-html highlighter-rouge">PRINT</code>, we can instead build these new features on top of the interface as software,
+allowing us to save a lot of the program size.</p>
+
+<h3 id="interactive-basic-repl">Interactive BASIC REPL</h3>
+<p>As a final example for drastically modifying the means of user interactions,
+I made an interactive BASIC interpreter written in the I/O SectorLISP.
+It runs a subset of BASIC with the instructions <code class="language-html highlighter-rouge">LET</code>, <code class="language-html highlighter-rouge">IF</code>, <code class="language-html highlighter-rouge">GOTO</code>, <code class="language-html highlighter-rouge">PRINT</code>, <code class="language-html highlighter-rouge">REM</code>, and the infix operators <code class="language-html highlighter-rouge">+</code>, <code class="language-html highlighter-rouge">-</code>, <code class="language-html highlighter-rouge">%</code>, and <code class="language-html highlighter-rouge"><span class="nt">&lt;</span><span class="err">=</span></code>.
+Integers are expressed in unary as a list of atoms, such as <code class="language-html highlighter-rouge">(1 1 1)</code>.</p>
+
+<p>Here is a screenshot of the final results, run in <a href="https://justine.lol/blinkenlights/">Blinkenlights</a>:</p>
+
+<p><a href="/blog/assets/posts/2022-01-12/ss3.png"><img src="/blog/assets/posts/2022-01-12/ss3.png" alt="A screenshot of SectorLISP running a BASIC interpreter." /></a></p>
+
+<p>The code is available at <a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic-repl.lisp">https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic-repl.lisp</a>.</p>
+
+<p>In this example, SectorLISP no longer presents an interface for evaluating Lisp expressions,
+but provides a new interface for recording and evaluating BASIC programs,
+transforming SectorLISP into an entirely different application.
+This highlights how programming languages can be used to redesign computers into tools for arbitrary purposes -
+using this SectorLISP program, users can now interact with the computer in a new way using the BASIC language.</p>
+
+<p>Although it is indeed possible to run this evaluator as a static program as in the code shown at the beginning,
+the new program is able to hide and encapsulate the details of the underlying Lisp program by presenting a new interface.
+For the static version, the evaluator must also be entirely retyped again to evaluate a new BASIC program, which is a major difference in terms of interaction.
+This shows how features as simple as <code class="language-html highlighter-rouge">READ</code> and <code class="language-html highlighter-rouge">PRINT</code> can be used to create a powerful application with the language.
+In a way, we can think that SectorLISP now works as a minimal operating system,
+and the programs within it such as this REPL works as an application that extends the capabilities of the underlying OS.</p>
+
+<h2 id="implementation-details">Implementation Details</h2>
+<p>Let’s look at some details for dealing with I/O.</p>
+
+<h3 id="sequential-execution---defining-progn-using-pre-existing-features">Sequential Execution - Defining <code class="header">PROGN</code> using Pre-existing Features</h3>
+<p>First of all, side effects are inseparable from the notion of sequential execution.
+Although lambda bodies in SectorLISP can only have one expression, there is in fact an
+already built-in way to naturally manage sequential execution - you can pass expressions as the <em>arguments</em> of lambdas
+to make them executed sequentially!</p>
+
+<p>For example, the following program allows the execution of three consecutive <code class="language-html highlighter-rouge">PRINT</code>s:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">((</span><span class="k">LAMBDA</span> <span class="p">()</span> <span class="nc">NIL</span><span class="p">)</span>
+ <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">A</span><span class="p">))</span>
+ <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">B</span><span class="p">))</span>
+ <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">C</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>Here, each <code class="language-html highlighter-rouge">PRINT</code> statement is taken as the arguments of an empty lambda expression <code class="language-html highlighter-rouge">(LAMBDA () NIL)</code>,
+which are all executed in the order of appearance.
+This is possible since <code class="language-html highlighter-rouge">EVLIS</code> evaluates all of the arguments <em>before</em> calling <code class="language-html highlighter-rouge">PAIRLIS</code> to bind the values to the variables,
+so all of the expressions get evaluated in order regardless to the number of arguments that the lambda expects.</p>
+
+<p>Since this empty lambda can be used anywhere with an arbitrary number of expressions,
+you can name it <code class="language-html highlighter-rouge">PROGN</code> and use it as follows:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">((</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">PROGN</span><span class="p">)</span>
+   <span class="p">(</span><span class="nv">PROGN</span> <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">A</span><span class="p">))</span>
+          <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">B</span><span class="p">))</span>
+          <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">C</span><span class="p">))))</span>
+ <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">()</span> <span class="nc">NIL</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>Note that <code class="language-html highlighter-rouge">PROGN</code> always returns <code class="language-html highlighter-rouge">NIL</code> instead of the last expression inside the sequence,
+which is different from the behavior in most Lisp dialects.
+To extract the values from a PROGN sequence, you can create repeated lambda arguments as follows:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">((</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">PROGN</span><span class="p">)</span>
+   <span class="p">(</span><span class="nv">PROGN</span> <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">A</span><span class="p">))</span>
+          <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">B</span><span class="p">))</span>
+          <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">C</span><span class="p">))</span>
+          <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">D</span><span class="p">)))</span>
+ <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">X</span> <span class="nv">X</span> <span class="nv">X</span><span class="p">)</span> <span class="nv">X</span><span class="p">)))</span>
+ <span class="c1">;; Returns (QUOTE D)</span>
+</code></pre></div></div>
+
+<p>Note that the return value of <code class="language-html highlighter-rouge">PRINT</code> is designed to be undefined to save the program space.
+This does not become a problem as will be discussed later.</p>
+
+<p>You can use <code class="language-html highlighter-rouge">CONS</code> instead of <code class="language-html highlighter-rouge">PROGN</code> as well for the same purpose:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">CDR</span> <span class="p">(</span><span class="k">CDR</span> <span class="p">(</span><span class="k">CDR</span>
+  <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">PRINT</span> <span class="nv">A</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">PRINT</span> <span class="nv">B</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">PRINT</span> <span class="nv">C</span><span class="p">)</span>
+        <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">D</span><span class="p">)))))))</span>
+</code></pre></div></div>
+
+<p>These tools are enough to deal with sequential execution and the extraction of the executed expressions.</p>
+
+<p>When I first came up with the <code class="language-html highlighter-rouge">PROGN</code> solution, I thought it was as if SectorLISP had been awaiting for sequential execution to be used.
+Although pure expressions as in the original SectorLISP implementation do not require this feature,
+it was a nice realization that this feature had already been built in so naturally in SectorLISP.
+It is also pleasing that the syntax it provides is the same as modern Lisp dialects,
+only with the difference that it always returns <code class="language-html highlighter-rouge">NIL</code> instead of the final value,
+which still can be worked around using the methods discussed earlier.</p>
+
+<h3 id="comments-inside-progn">Comments inside <code class="header">PROGN</code></h3>
+<p>Since all of the values inside <code class="language-html highlighter-rouge">PROGN</code> are discarded after its execution,
+you can write comments inside a <code class="language-html highlighter-rouge">PROGN</code> block, with the expense of some RAM space in the string interning region and some extra evaluations:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">((</span><span class="k">LAMBDA</span> <span class="p">(</span>
+           <span class="nv">PROGN</span> <span class="c1">;;</span>
+         <span class="p">)</span>
+   <span class="p">(</span><span class="nv">PROGN</span> <span class="c1">;; (QUOTE - THIS PRINTS 3 CONSECTUTIVE LETTERS.)</span>
+          <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">A</span><span class="p">))</span>
+          <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">B</span><span class="p">))</span>
+          <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">C</span><span class="p">))))</span>
+ <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">()</span> <span class="nc">NIL</span><span class="p">))</span>
+ <span class="nc">NIL</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Here, the variable <code class="language-html highlighter-rouge">;;</code> is bound to <code class="language-html highlighter-rouge">NIL</code> and is placed inside <code class="language-html highlighter-rouge">PROGN</code>.
+Since <code class="language-html highlighter-rouge">;;</code> immediately evaluates to <code class="language-html highlighter-rouge">NIL</code> and is discarded, this does nothing to the relevant states of the interpreter and the program.
+Because <code class="language-html highlighter-rouge">;;</code> actually does not comment out its following statement in SectorLISP,
+the comment body that follows after is enclosed inside a <code class="language-html highlighter-rouge">QUOTE</code> form to prevent being executed,
+which allows for its result to also be discarded after execution.</p>
+
+<p>Also, note that the parentheses for the outer lambda have some extra newlines to prevent text editors from commenting out the parentheses <code class="language-html highlighter-rouge">)</code>.
+This format is used in the number guessing program as well.</p>
+
+<h3 id="loops-using-recursion">Loops using Recursion</h3>
+<p>Although this is not a newly added feature, it is worth noting that loops can be implemented as recursion, by calling a function within itself.
+In the number guessing game example, the functions <code class="language-html highlighter-rouge">MAIN</code> and <code class="language-html highlighter-rouge">GAMELOOP</code> are called within themselves to be executed an arbitrary number of times.
+This combined with <code class="language-html highlighter-rouge">PROGN</code> provides a natural way for writing sequential programs.</p>
+
+<h3 id="print-debugging">Print Debugging</h3>
+<p>The <code class="language-html highlighter-rouge">PRINT</code> feature is not only convenient for the user of the program, but in fact provides a helpful interface for the programmer as well.
+That is, it allows for print debugging, to check the values occurring at runtime.
+Even with Lisp having a comfortable syntax, even the most experienced programmer would have a difficult time debugging a large program
+if the internal states and variables could not be observed at runtime.</p>
+
+<p>This can be done by simply wrapping the expression with a predefined <code class="language-html highlighter-rouge">DEBUG</code> function:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">((</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">DEBUG</span><span class="p">)</span>
+   <span class="nv">...</span>
+   <span class="p">(</span><span class="nv">DEBUG</span> <span class="nv">EXPR</span><span class="p">)</span>
+   <span class="nv">...</span>
+ <span class="p">)</span>
+ <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="k">CDR</span> <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">PRINT</span> <span class="nv">X</span><span class="p">)</span> <span class="nv">X</span><span class="p">)))))</span>
+</code></pre></div></div>
+
+<p>The need for the extra wrapper function <code class="language-html highlighter-rouge">DEBUG</code> occurs since the return value of <code class="language-html highlighter-rouge">PRINT</code>
+is designed to be undefined to save the program size.</p>
+
+<p>The art of writing a program always comes with the act of deleting and revising a program,
+by observing its behavior and the internal states.
+The print debugging feature is a simple yet powerful interface that is a de facto requirement if one wishes to write large programs.
+Such an interface is comparable to the reason why <code class="language-html highlighter-rouge">COND</code> is implemented in SectorLISP instead of <code class="language-html highlighter-rouge">IF</code> which usually induces a more obfuscated program structure.
+I myself heavily used this print debugging feature to write the BASIC interpreter,
+as well as the version that runs in the original SectorLISP which I wrote and debugged in the I/O SectorLISP fork.</p>
+
+<h3 id="return-values-of-print">Return Values of <code class="header">PRINT</code></h3>
+<p>As it was mentioned earlier, <code class="language-html highlighter-rouge">PRINT</code> is designed to return an undefined value to save the program size.
+Since values passed to <code class="language-html highlighter-rouge">PRINT</code> can be extracted using <code class="language-html highlighter-rouge">DEBUG</code>, and <code class="language-html highlighter-rouge">PRINT</code> can be used in <code class="language-html highlighter-rouge">PROGN</code> where values are discarded,
+having <code class="language-html highlighter-rouge">PRINT</code> to return undefined values was not a problem for at least in all of the examples discussed before.
+Running a bare <code class="language-html highlighter-rouge">PRINT</code> expression in the REPL also didn’t print any unwanted strings in the console,
+so I consider that this property can be safely managed in most use cases.
+Running various <code class="language-html highlighter-rouge">PRINT</code> expressions in the REPL turns out like this:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">A</span><span class="p">))</span>
+<span class="nv">A</span>
+<span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">A</span><span class="p">)))</span>
+<span class="nv">ANIL</span>
+<span class="p">(</span><span class="k">PRINT</span> <span class="p">(</span><span class="k">READ</span><span class="p">))</span><span class="nv">AAA</span>
+<span class="nv">AAA</span>
+</code></pre></div></div>
+
+<p>Notice that the results are slightly odd in the first expression,
+since the REPL is supposed to show the return value of <code class="language-html highlighter-rouge">PRINT</code> as well as its effect of printing <code class="language-html highlighter-rouge">A</code> in the console,
+but nothing is printed.
+In the second expression, a nested <code class="language-html highlighter-rouge">PRINT</code> expression turns out to return <code class="language-html highlighter-rouge">NIL</code>, which is printed after <code class="language-html highlighter-rouge">A</code> as a return value by the REPL.
+This phenomenon should not occur in well-written large programs,
+if the program is written so that the return values of <code class="language-html highlighter-rouge">PRINT</code> is not referenced by anything,
+which should be a natural result if they are all executed inside <code class="language-html highlighter-rouge">PROGN</code>.</p>
+
+<p><code class="language-html highlighter-rouge">READ</code> is much safer since it is by definition designed to have a valid return value regardless of its context.
+At first, there was a bug where the first character was ignored by <code class="language-html highlighter-rouge">READ</code>, but it was fixed by caching the lookahead character from the user input
+inside <code class="language-html highlighter-rouge">GetChar</code>, as fixed in <a href="https://github.com/woodrush/sectorlisp/commit/162969de4279708cafbc46095773926248c553a0"><code class="language-html highlighter-rouge">162969d</code></a>
+(the latest version uses the <code class="language-html highlighter-rouge">%bp</code> register instead of <code class="language-html highlighter-rouge">%fs</code>, as fixed in <a href="https://github.com/woodrush/sectorlisp/commit/1af3db75fe49c964d27b5a86e65db9d7b4353ba9"><code class="language-html highlighter-rouge">1af3db7</code></a>).</p>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>I made a fork of SectorLISP that supports two new special forms <code class="language-html highlighter-rouge">READ</code> and <code class="language-html highlighter-rouge">PRINT</code>, which provides a natural I/O interface useful for both the programmer and the user of the program.
+This allowed for the following findings:</p>
+
+<ul>
+  <li>The fork allows for writing interactive programs for SectorLISP, such as games and REPLs
+of other programming languages such as a subset of BASIC.</li>
+  <li>With the new special forms <code class="language-html highlighter-rouge">READ</code> and <code class="language-html highlighter-rouge">PRINT</code>, you can now design the interactions between the user and the computer,
+which is a feature supported in all of the other languages mentioned in the original <a href="https://justine.lol/sectorlisp2/">SectorLISP blog post</a>,
+including SectorFORTH, BootBasic, and also BF.</li>
+  <li>Adding all of these features only amounted to an extra 35 bytes of the binary, with a total of 469 bytes,
+or 471 bytes including the boot signature.
+When speaking of the binary footprint of a program, it is important for each program to share as many common features as possible.
+The fork of SectorLISP achieves this by supporting the I/O feature, and also accomplishes in showing that the program size
+can still be limited to an amount less by 22 bytes or more compared with the other programming languages mentioned in the SectorLISP blog post.</li>
+</ul>
+
+  </div><a class="u-url" href="/blog/posts/2022-01-12-sectorlisp-io.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Woodrush&#39;s Blog</h2>
+
+    <div class="footer-col-wrapper">
+      <!-- <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Woodrush&#39;s Blog</li></ul>
+      </div> -->
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/woodrush"><svg class="svg-icon"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg> <span class="username">woodrush</span></a></li><li><a href="https://www.twitter.com/woodrush924"><svg class="svg-icon"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">woodrush924</span></a></li><li><a href="https://www.linkedin.com/in/hikaru-ikuta-a2986073"><svg class="svg-icon"><use xlink:href="/blog/assets/minima-social-icons.svg#linkedin"></use></svg> <span class="username">Hikaru Ikuta</span></a></li></ul>
+</div>
+
+      <!-- <div class="footer-col footer-col-3">
+        <p>A blog written by Hikaru Ikuta.</p>
+      </div> -->
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
