@@ -3,9 +3,9 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Adding I/O Features to SectorLISP | Woodrush’s Blog</title>
+<title>Extending SectorLISP to Implement BASIC REPLs and Games | Woodrush’s Blog</title>
 <meta name="generator" content="Jekyll v4.2.1" />
-<meta property="og:title" content="Adding I/O Features to SectorLISP" />
+<meta property="og:title" content="Extending SectorLISP to Implement BASIC REPLs and Games" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Supporting interactive programs in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project." />
 <meta property="og:description" content="Supporting interactive programs in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project." />
@@ -17,9 +17,9 @@
 <meta property="article:published_time" content="2022-01-12T11:01:35+09:00" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta property="twitter:image" content="https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png" />
-<meta property="twitter:title" content="Adding I/O Features to SectorLISP" />
+<meta property="twitter:title" content="Extending SectorLISP to Implement BASIC REPLs and Games" />
 <script type="application/ld+json">
-{"datePublished":"2022-01-12T11:01:35+09:00","description":"Supporting interactive programs in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project.","@type":"BlogPosting","dateModified":"2022-01-12T11:01:35+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html"},"url":"https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html","image":"https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png","headline":"Adding I/O Features to SectorLISP","@context":"https://schema.org"}</script>
+{"datePublished":"2022-01-12T11:01:35+09:00","description":"Supporting interactive programs in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project.","@type":"BlogPosting","dateModified":"2022-01-12T11:01:35+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html"},"url":"https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html","image":"https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png","headline":"Extending SectorLISP to Implement BASIC REPLs and Games","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/blog/assets/main.css">
   
@@ -50,7 +50,7 @@
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Adding I/O Features to SectorLISP</h1>
+    <h1 class="post-title p-name" itemprop="name headline">Extending SectorLISP to Implement BASIC REPLs and Games</h1>
     <p class="post-meta">
       <time class="dt-published" datetime="2022-01-12T11:01:35+09:00" itemprop="datePublished">Jan 12, 2022
       </time></p>
@@ -307,6 +307,12 @@ Integers are expressed in unary as a list of atoms, such as <code class="languag
 
 <p><a href="/blog/assets/posts/2022-01-12/ss3.png"><img src="/blog/assets/posts/2022-01-12/ss3.png" alt="A screenshot of SectorLISP running a BASIC interpreter." /></a></p>
 
+<p><a href="https://github.com/jart">@jart</a> has created a video of it running on Blinkenlights (Thank you @jart!):</p>
+
+<video width="100%" poster="/blog/assets/posts/2022-01-12/ss-basic.png" controls="" preload="none">
+  <source src="//storage.googleapis.com/justine/sectorlisp2/woodrush2.mp4" type="video/mp4" />
+</video>
+
 <p>The code is available at <a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic-repl.lisp">https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic-repl.lisp</a>.</p>
 
 <p>In this example, SectorLISP no longer presents an interface for evaluating Lisp expressions,
@@ -501,6 +507,7 @@ Consider the following example where a function <code class="language-html highl
 <p>the code can then be reduced by two instructions without changing the behavior, by concatenating <code class="language-html highlighter-rouge">A</code> before <code class="language-html highlighter-rouge">B</code> as the following:</p>
 
 <div class="language-nasm highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="nl">A:</span>      <span class="nf">mov</span> <span class="o">%</span><span class="nb">ax</span><span class="p">,</span><span class="o">%</span><span class="nb">si</span>
+<span class="c1">;       slide</span>
 <span class="nl">B:</span>      <span class="nf">mov</span> <span class="o">%</span><span class="nb">si</span><span class="p">,</span><span class="o">%</span><span class="nb">bp</span>
         <span class="nf">ret</span>
 </code></pre></div></div>
@@ -536,6 +543,14 @@ Thank you @jart for your contribution!</li>
     </ul>
   </li>
 </ul>
+
+<h2 id="credits">Credits</h2>
+<p>The video for the <a href="#interactive-basic-repl">interactive BASIC REPL</a> was created by <a href="https://justine.lol/">Justine Tunney</a> from Google.
+The new <a href="https://github.com/woodrush/sectorlisp/tree/io">I/O fork of SectorLISP</a> discussed in this post was first created by <a href="https://woodrush.github.io/">Hikaru Ikuta</a>,
+and have received <a href="https://github.com/woodrush/sectorlisp/pull/2">contributions</a> from Justine Tunney.
+The SectorLISP project was first started by Justine Tunney and was created by the authors who have contributed to <a href="https://github.com/jart/sectorlisp">the project</a>,
+and the authors credited in the original <a href="https://justine.lol/sectorlisp2/">SectorLISP blog post</a>.
+I’d also like to thank Justine and <a href="https://cs.rit.edu/~hm2186/">Hannah Miller</a> from the Rochester Institute of Technology for the fruitful discussion on improving this blog post.</p>
 
   </div><a class="u-url" href="/blog/posts/2022-01-12-sectorlisp-io.html" hidden></a>
 </article>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-01-12T14:02:52+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">Adding I/O Features to SectorLISP</title><link href="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html" rel="alternate" type="text/html" title="Adding I/O Features to SectorLISP" /><published>2022-01-12T11:01:35+09:00</published><updated>2022-01-12T11:01:35+09:00</updated><id>https://woodrush.github.io/blog/posts/sectorlisp-io</id><content type="html" xml:base="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html"><![CDATA[<p><a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic.lisp"><img src="/blog/assets/posts/2022-01-12/ss4.png" alt="A screenshot of a BASIC interpreter written for SectorLISP." /></a></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-01-12T16:25:52+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">Extending SectorLISP to Implement BASIC REPLs and Games</title><link href="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html" rel="alternate" type="text/html" title="Extending SectorLISP to Implement BASIC REPLs and Games" /><published>2022-01-12T11:01:35+09:00</published><updated>2022-01-12T11:01:35+09:00</updated><id>https://woodrush.github.io/blog/posts/sectorlisp-io</id><content type="html" xml:base="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html"><![CDATA[<p><a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic.lisp"><img src="/blog/assets/posts/2022-01-12/ss4.png" alt="A screenshot of a BASIC interpreter written for SectorLISP." /></a></p>
 
 <p><a href="https://justine.lol/sectorlisp2/">SectorLISP</a> is an amazing project
 where a fully functional Lisp interpreter is fit into the 512 bytes of the boot sector of a floppy disk.
@@ -248,6 +248,12 @@ Integers are expressed in unary as a list of atoms, such as <code class="languag
 
 <p><a href="/blog/assets/posts/2022-01-12/ss3.png"><img src="/blog/assets/posts/2022-01-12/ss3.png" alt="A screenshot of SectorLISP running a BASIC interpreter." /></a></p>
 
+<p><a href="https://github.com/jart">@jart</a> has created a video of it running on Blinkenlights (Thank you @jart!):</p>
+
+<video width="100%" poster="/blog/assets/posts/2022-01-12/ss-basic.png" controls="" preload="none">
+  <source src="//storage.googleapis.com/justine/sectorlisp2/woodrush2.mp4" type="video/mp4" />
+</video>
+
 <p>The code is available at <a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic-repl.lisp">https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic-repl.lisp</a>.</p>
 
 <p>In this example, SectorLISP no longer presents an interface for evaluating Lisp expressions,
@@ -442,6 +448,7 @@ Consider the following example where a function <code class="language-html highl
 <p>the code can then be reduced by two instructions without changing the behavior, by concatenating <code class="language-html highlighter-rouge">A</code> before <code class="language-html highlighter-rouge">B</code> as the following:</p>
 
 <div class="language-nasm highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="nl">A:</span>      <span class="nf">mov</span> <span class="o">%</span><span class="nb">ax</span><span class="p">,</span><span class="o">%</span><span class="nb">si</span>
+<span class="c1">;       slide</span>
 <span class="nl">B:</span>      <span class="nf">mov</span> <span class="o">%</span><span class="nb">si</span><span class="p">,</span><span class="o">%</span><span class="nb">bp</span>
         <span class="nf">ret</span>
 </code></pre></div></div>
@@ -476,4 +483,12 @@ bring down the total program size to 465 bytes or 467 bytes including the boot s
 Thank you @jart for your contribution!</li>
     </ul>
   </li>
-</ul>]]></content><author><name></name></author><category term="Lisp" /><category term="x86" /><category term="SectorLISP" /><summary type="html"><![CDATA[Supporting interactive programs in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png" /><media:content medium="image" url="https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+</ul>
+
+<h2 id="credits">Credits</h2>
+<p>The video for the <a href="#interactive-basic-repl">interactive BASIC REPL</a> was created by <a href="https://justine.lol/">Justine Tunney</a> from Google.
+The new <a href="https://github.com/woodrush/sectorlisp/tree/io">I/O fork of SectorLISP</a> discussed in this post was first created by <a href="https://woodrush.github.io/">Hikaru Ikuta</a>,
+and have received <a href="https://github.com/woodrush/sectorlisp/pull/2">contributions</a> from Justine Tunney.
+The SectorLISP project was first started by Justine Tunney and was created by the authors who have contributed to <a href="https://github.com/jart/sectorlisp">the project</a>,
+and the authors credited in the original <a href="https://justine.lol/sectorlisp2/">SectorLISP blog post</a>.
+I’d also like to thank Justine and <a href="https://cs.rit.edu/~hm2186/">Hannah Miller</a> from the Rochester Institute of Technology for the fruitful discussion on improving this blog post.</p>]]></content><author><name></name></author><category term="Lisp" /><category term="x86" /><category term="SectorLISP" /><summary type="html"><![CDATA[Supporting interactive programs in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png" /><media:content medium="image" url="https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
