@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-01-12T12:06:37+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">Adding I/O Features to SectorLISP</title><link href="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html" rel="alternate" type="text/html" title="Adding I/O Features to SectorLISP" /><published>2022-01-12T11:01:35+09:00</published><updated>2022-01-12T11:01:35+09:00</updated><id>https://woodrush.github.io/blog/posts/sectorlisp-io</id><content type="html" xml:base="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html"><![CDATA[<p><a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic.lisp"><img src="/blog/assets/posts/2022-01-12/ss4.png" alt="A screenshot of a BASIC interpreter written for SectorLISP." /></a></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-01-12T14:02:52+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">Adding I/O Features to SectorLISP</title><link href="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html" rel="alternate" type="text/html" title="Adding I/O Features to SectorLISP" /><published>2022-01-12T11:01:35+09:00</published><updated>2022-01-12T11:01:35+09:00</updated><id>https://woodrush.github.io/blog/posts/sectorlisp-io</id><content type="html" xml:base="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html"><![CDATA[<p><a href="https://github.com/woodrush/sectorlisp-examples/blob/main/lisp/basic.lisp"><img src="/blog/assets/posts/2022-01-12/ss4.png" alt="A screenshot of a BASIC interpreter written for SectorLISP." /></a></p>
 
 <p><a href="https://justine.lol/sectorlisp2/">SectorLISP</a> is an amazing project
 where a fully functional Lisp interpreter is fit into the 512 bytes of the boot sector of a floppy disk.
@@ -86,6 +86,12 @@ The rather minimal increase was achievable since most of the code for handling i
 This fork successfully shows that adding an I/O feature to SectorLISP
 will still allow it to have a smaller binary footprint than the two former champions.</p>
 
+<p><strong>Update:</strong> Thanks to a <a href="https://github.com/woodrush/sectorlisp/pull/2">pull request</a> by <a href="https://github.com/jart">@jart</a>,
+the author of the original SectorLISP, we’re down to 465 bytes or 467 bytes including the boot signature.
+Thank you @jart for your contribution!
+The details of the assembly optimizations including the one used in this pull request are discussed in the
+<a href="#assembly-optimizations">Assembly Optimizations</a> section.</p>
+
 <h2 id="usage">Usage</h2>
 <p>To run the SectorLISP fork, first <code class="language-html highlighter-rouge">git clone</code> and <code class="language-html highlighter-rouge">make</code> SectorLISP’s binary, <code class="language-html highlighter-rouge">sectorlisp.bin</code>:</p>
 
@@ -124,12 +130,12 @@ at the center of the screen.
 This region is the console used for input and output.
 Then, press <code class="language-html highlighter-rouge">c</code> to run the emulator in continuous mode.
 The cursor in the <code class="language-html highlighter-rouge">TELETYPEWRITER</code> region should move one line down.
-Afterwards, you can start typing in text or paste a long code from your terminal into Blinkenlight’s console
+You can then start typing in text or paste a long code from your terminal into Blinkenlight’s console
 to run your Lisp program.</p>
 
 <h3 id="running-on-physical-hardware">Running on Physical Hardware</h3>
-<p>You can also run SectorLISP on an actual physical machine, if you have a PC with an Intel CPU that boots with a BIOS,
-and any type of drive such as a USB drive or a floppy disk that can be used as a boot drive.
+<p>You can also run SectorLISP on an actual physical machine if you have a PC with an Intel CPU that boots with a BIOS,
+and a drive such as a USB drive or a floppy disk that can be used as a boot drive.
 First, mount your drive to the PC you’ve built sectorlisp.bin on, and check:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>lsblk <span class="nt">-o</span> KNAME,TYPE,SIZE,MODEL
@@ -341,7 +347,7 @@ you can write comments inside a <code class="language-html highlighter-rouge">PR
 <p>Here, the variable <code class="language-html highlighter-rouge">;;</code> is bound to <code class="language-html highlighter-rouge">NIL</code> and is placed inside <code class="language-html highlighter-rouge">PROGN</code>.
 Since <code class="language-html highlighter-rouge">;;</code> immediately evaluates to <code class="language-html highlighter-rouge">NIL</code> and is discarded, this does nothing to the relevant states of the interpreter and the program.
 Because <code class="language-html highlighter-rouge">;;</code> actually does not comment out its following statement in SectorLISP,
-the comment body that follows after is enclosed inside a <code class="language-html highlighter-rouge">QUOTE</code> form to prevent being executed,
+the comment body that follows after is enclosed inside a <code class="language-html highlighter-rouge">QUOTE</code> form to prevent from it being executed,
 which allows for its result to also be discarded after execution.</p>
 
 <p>Also, note that the parentheses for the outer lambda have some extra newlines to prevent text editors from commenting out the parentheses <code class="language-html highlighter-rouge">)</code>.
@@ -407,6 +413,48 @@ At first, there was a bug where the first character was ignored by <code class="
 inside <code class="language-html highlighter-rouge">GetChar</code>, as fixed in <a href="https://github.com/woodrush/sectorlisp/commit/162969de4279708cafbc46095773926248c553a0"><code class="language-html highlighter-rouge">162969d</code></a>
 (the latest version uses the <code class="language-html highlighter-rouge">%bp</code> register instead of <code class="language-html highlighter-rouge">%fs</code>, as fixed in <a href="https://github.com/woodrush/sectorlisp/commit/1af3db75fe49c964d27b5a86e65db9d7b4353ba9"><code class="language-html highlighter-rouge">1af3db7</code></a>).</p>
 
+<h2 id="assembly-optimizations">Assembly Optimizations</h2>
+<p>Here we’ll cover the details of optimizing the assembly size.
+More details for the methods used in the original SectorLISP assembly code are available at
+the original SectorLISP blog post, <a href="https://justine.lol/sectorlisp2/">https://justine.lol/sectorlisp2/</a>.</p>
+
+<h3 id="smaller-jump-instruction-encodings">Smaller Jump Instruction Encodings</h3>
+<p>This is a method used in the <a href="https://github.com/woodrush/sectorlisp/pull/2">pull request</a> by <a href="https://github.com/jart">@jart</a>,
+the author of the original SectorLISP.
+Conditional jumps in x86 are encoded in different instruction sizes depending on the size of the jump’s displacement.
+When the displacement fits in one byte, i.e. it is between -128 and 127,
+the instruction fits in two bytes, instead of four bytes when the displacement is larger than that size.
+The pull request by @jart uses this feature by first reordering the functions within the assembly code,
+allowing to shrink the displacements for the conditional jump instructions related to <code class="language-html highlighter-rouge">READ</code> and <code class="language-html highlighter-rouge">PRINT</code>.</p>
+
+<h3 id="reducing-return-instructions-using-the-control-flow-structure">Reducing Return Instructions using the Control Flow Structure</h3>
+<p>This is a method used in the original SectorLISP implementation, which is used in the fork as well.
+Consider the following example where a function <code class="language-html highlighter-rouge">A</code> calls another function <code class="language-html highlighter-rouge">B</code> and then immediately returns afterward:</p>
+
+<div class="language-nasm highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="nl">A:</span>      <span class="nf">mov</span> <span class="o">%</span><span class="nb">ax</span><span class="p">,</span><span class="o">%</span><span class="nb">si</span>
+        <span class="nf">call</span> <span class="nv">B</span>
+        <span class="nf">ret</span>
+
+<span class="nl">B:</span>      <span class="nf">mov</span> <span class="o">%</span><span class="nb">si</span><span class="p">,</span><span class="o">%</span><span class="nb">bp</span>
+        <span class="nf">ret</span>
+</code></pre></div></div>
+
+<p>the code can then be reduced by two instructions without changing the behavior, by concatenating <code class="language-html highlighter-rouge">A</code> before <code class="language-html highlighter-rouge">B</code> as the following:</p>
+
+<div class="language-nasm highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="nl">A:</span>      <span class="nf">mov</span> <span class="o">%</span><span class="nb">ax</span><span class="p">,</span><span class="o">%</span><span class="nb">si</span>
+<span class="nl">B:</span>      <span class="nf">mov</span> <span class="o">%</span><span class="nb">si</span><span class="p">,</span><span class="o">%</span><span class="nb">bp</span>
+        <span class="nf">ret</span>
+</code></pre></div></div>
+
+<p>This way, even if there is no <code class="language-html highlighter-rouge">ret</code> instruction in the <code class="language-html highlighter-rouge">A</code> block,
+the control flow can immediately move inside <code class="language-html highlighter-rouge">B</code> where it has a <code class="language-html highlighter-rouge">ret</code> instruction.
+The same <code class="language-html highlighter-rouge">ret</code> instruction is therefore shared by two functions <code class="language-html highlighter-rouge">A</code> and <code class="language-html highlighter-rouge">B</code>.
+This allows function calls such as <code class="language-html highlighter-rouge">A</code> and <code class="language-html highlighter-rouge">B</code> to both behave the same as in the previous code with a fewer amount of instructions.</p>
+
+<p>This method is used to implement <code class="language-html highlighter-rouge">READ</code> and <code class="language-html highlighter-rouge">PRINT</code> as an extension of <code class="language-html highlighter-rouge">.PutObject</code> and <code class="language-html highlighter-rouge">GetToken</code>
+where some additional instructions are run before the original functions.
+This way of reusing existing code allowed the increase of the program size to be a rather small size.</p>
+
 <h2 id="conclusion">Conclusion</h2>
 <p>I made a fork of SectorLISP that supports two new special forms <code class="language-html highlighter-rouge">READ</code> and <code class="language-html highlighter-rouge">PRINT</code>, which provides a natural I/O interface useful for both the programmer and the user of the program.
 This allowed for the following findings:</p>
@@ -421,5 +469,11 @@ including SectorFORTH, BootBasic, and also BF.</li>
 or 471 bytes including the boot signature.
 When speaking of the binary footprint of a program, it is important for each program to share as many common features as possible.
 The fork of SectorLISP achieves this by supporting the I/O feature, and also accomplishes in showing that the program size
-can still be limited to an amount less by 22 bytes or more compared with the other programming languages mentioned in the SectorLISP blog post.</li>
+can still be limited to an amount less by 22 bytes or more compared with the other programming languages mentioned in the SectorLISP blog post.
+    <ul>
+      <li><strong>Update:</strong> As mentioned earlier, a pull request from <a href="https://github.com/jart">@jart</a> has allowed us to
+bring down the total program size to 465 bytes or 467 bytes including the boot signature.
+Thank you @jart for your contribution!</li>
+    </ul>
+  </li>
 </ul>]]></content><author><name></name></author><category term="Lisp" /><category term="x86" /><category term="SectorLISP" /><summary type="html"><![CDATA[Supporting interactive programs in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png" /><media:content medium="image" url="https://woodrush.github.io/blog/assets/posts/2022-01-12/ss4.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
