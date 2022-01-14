@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-01-12T19:25:07+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">A Lisp Interpreter Implemented in Conway’s Game of Life</title><link href="https://woodrush.github.io/blog/posts/2022-01-12-lisp-in-life.html" rel="alternate" type="text/html" title="A Lisp Interpreter Implemented in Conway’s Game of Life" /><published>2022-01-12T18:01:35+09:00</published><updated>2022-01-12T18:01:35+09:00</updated><id>https://woodrush.github.io/blog/posts/lisp-in-life</id><content type="html" xml:base="https://woodrush.github.io/blog/posts/2022-01-12-lisp-in-life.html"><![CDATA[<p><a href="/blog/assets/posts/2022-01-12-lisp-in-life/ss2.png"><img src="/blog/assets/posts/2022-01-12-lisp-in-life/ss2.png" alt="A screenshot of the Lisp in Life architecture." /></a></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-01-14T17:06:55+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">A Lisp Interpreter Implemented in Conway’s Game of Life</title><link href="https://woodrush.github.io/blog/posts/2022-01-12-lisp-in-life.html" rel="alternate" type="text/html" title="A Lisp Interpreter Implemented in Conway’s Game of Life" /><published>2022-01-12T18:01:35+09:00</published><updated>2022-01-12T18:01:35+09:00</updated><id>https://woodrush.github.io/blog/posts/lisp-in-life</id><content type="html" xml:base="https://woodrush.github.io/blog/posts/2022-01-12-lisp-in-life.html"><![CDATA[<p><a href="/blog/assets/posts/2022-01-12-lisp-in-life/ss2.png"><img src="/blog/assets/posts/2022-01-12-lisp-in-life/ss2.png" alt="A screenshot of the Lisp in Life architecture." /></a></p>
 
 <p>Lisp in Life is a Lisp interpreter implemented in Conway’s Game of Life.</p>
 
@@ -22,6 +22,26 @@ The standard output is written at the bottom end of the RAM module, which can be
 The Lisp implementation supports lexical closures and macros, allowing one to write Lisp programs in a Lisp-like taste, as far as the memory limit allows you to.</p>
 
 <p>The <a href="https://github.com/woodrush/lisp-in-life/blob/main/src/lisp.c">Lisp interpreter</a> is written in C. Using the build system for this project, you can also compile your own C11-compatible C code and run in on Conway’s Game of Life.</p>
+
+<h3 id="previous-work">Previous Work</h3>
+<p>As previously mentioned,
+to the best of my knowledge, this is the first time a high-level programming language was interpreted in Conway’s Game of Life.</p>
+
+<p>The entry featuring <a href="https://www.conwaylife.com/wiki/Universal_computer">Universal Computers</a> in LifeWiki has a list of computers created in the Game of Life.
+Two important instances not mentioned in this entry are the <a href="https://codegolf.stackexchange.com/questions/11880/build-a-working-game-of-tetris-in-conways-game-of-life/142673#142673">Quest For Tetris</a> (QFT) Project
+created by the authors of the QFT project, and <a href="https://www.conwaylife.com/wiki/APGsembly">APGsembly</a> created by Adam P. Goucher.
+All of these work are designed to run an assembly language and are not designed to interpret a high-level language per se.</p>
+
+<p>An example of a compiled high-level language targeted for the Game of Life is Cogol by the QFT project.
+Cogol is compiled to the assembly language QFTASM, targeted for the QFT architecture.
+Although Cogol is targeted for the QFT architecture, it requires compilation to QFTASM for the code to be run in the QFT architecture.</p>
+
+<p>In Lisp in Life, a modified version of the QFT architecture is first created for improving the pattern’s runtime.
+Modifications include introducing a new cascaded storage architecture for the ROM, new opcodes, extending the ROM and RAM address space, etc.
+The Lisp source code is then written into the computer’s RAM module as its raw binary ASCII format.
+The Conway’s Game of Life pattern directly reads, parses, and evaluates this Lisp source code to produce its output.
+This feature of allowing a Conway’s Game of Life pattern to evaluate a high-level programming language expressed as a string of text
+is a novel feature that was newly achieved in this project.</p>
 
 <h2 id="screenshots">Screenshots</h2>
 <p><img src="/blog/assets/posts/2022-01-12-lisp-in-life/ss1.png" alt="An overview of the entire architecture." /></p>
