@@ -103,7 +103,6 @@ to obtain the model parameters used for this network is available at the reposit
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>git clone https://github.com/jart/sectorlisp
 <span class="nb">cd </span>sectorlisp
-git checkout io
 make
 </code></pre></div></div>
 
@@ -111,6 +110,7 @@ make
 
 <p>By building a <a href="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html">fork</a>
 of SectorLISP that supports I/O, an additional output with some messages indicating the input and the output will become printed.
+In this case, <code class="language-html highlighter-rouge">git checkout</code> to the <code class="language-html highlighter-rouge">io</code> branch by running <code class="language-html highlighter-rouge">git checkout io</code> before running <code class="language-html highlighter-rouge">make</code>.
 Since the source code for this project is backwards comptible with the main SectorLISP branch,
 the same code can be run on both versions.</p>
 
@@ -127,13 +127,14 @@ and get the latest version:</p>
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>./blinkenlights.com <span class="nt">-rt</span> sectorlisp.bin
 </code></pre></div></div>
 
-<p>In some cases, there might be a graphics-related error showing and the emulator may not start.
+<p>In some cases in Ubuntu, there might be a graphics-related error showing and the emulator may not start.
 In that case, run the following command first available on the download page:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="nb">sudo </span>sh <span class="nt">-c</span> <span class="s2">"echo ':APE:M::MZqFpD::/bin/sh:' &gt;/proc/sys/fs/binfmt_misc/register"</span>
 </code></pre></div></div>
 
-<p>Running this command should allow you to run Blinkenlights on your terminal.</p>
+<p>Running this command should allow you to run Blinkenlights on your terminal.
+Instructions for running Blinkenlights on other operating systems is described in the <a href="https://justine.lol/blinkenlights/download.html">Blinkenlights download page</a>.</p>
 
 <p>After starting Blinkenlights,
 expand the size of your terminal large enough so that the <code class="language-html highlighter-rouge">TELETYPEWRITER</code> region shows up
