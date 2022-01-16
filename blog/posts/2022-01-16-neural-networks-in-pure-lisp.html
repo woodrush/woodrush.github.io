@@ -3,9 +3,9 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Building a Neural Network in Pure Lisp without Built-in Numbers using only Atoms and Lists | Woodrush’s Blog</title>
+<title>Building a Neural Network in Pure Lisp Without Built-In Numbers Using Only Atoms and Lists | Woodrush’s Blog</title>
 <meta name="generator" content="Jekyll v4.2.1" />
-<meta property="og:title" content="Building a Neural Network in Pure Lisp without Built-in Numbers using only Atoms and Lists" />
+<meta property="og:title" content="Building a Neural Network in Pure Lisp Without Built-In Numbers Using Only Atoms and Lists" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A neural network written in pure Lisp without built-in numbers using only atoms and lists in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project." />
 <meta property="og:description" content="A neural network written in pure Lisp without built-in numbers using only atoms and lists in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project." />
@@ -17,9 +17,9 @@
 <meta property="article:published_time" content="2022-01-16T19:00:35+09:00" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta property="twitter:image" content="https://woodrush.github.io/blog/assets/posts/2022-01-16/nn-diagram.png" />
-<meta property="twitter:title" content="Building a Neural Network in Pure Lisp without Built-in Numbers using only Atoms and Lists" />
+<meta property="twitter:title" content="Building a Neural Network in Pure Lisp Without Built-In Numbers Using Only Atoms and Lists" />
 <script type="application/ld+json">
-{"datePublished":"2022-01-16T19:00:35+09:00","description":"A neural network written in pure Lisp without built-in numbers using only atoms and lists in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project.","@type":"BlogPosting","dateModified":"2022-01-16T19:00:35+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://woodrush.github.io/blog/posts/2022-01-16-neural-networks-in-pure-lisp.html"},"url":"https://woodrush.github.io/blog/posts/2022-01-16-neural-networks-in-pure-lisp.html","image":"https://woodrush.github.io/blog/assets/posts/2022-01-16/nn-diagram.png","headline":"Building a Neural Network in Pure Lisp without Built-in Numbers using only Atoms and Lists","@context":"https://schema.org"}</script>
+{"datePublished":"2022-01-16T19:00:35+09:00","description":"A neural network written in pure Lisp without built-in numbers using only atoms and lists in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project.","@type":"BlogPosting","dateModified":"2022-01-16T19:00:35+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://woodrush.github.io/blog/posts/2022-01-16-neural-networks-in-pure-lisp.html"},"url":"https://woodrush.github.io/blog/posts/2022-01-16-neural-networks-in-pure-lisp.html","image":"https://woodrush.github.io/blog/assets/posts/2022-01-16/nn-diagram.png","headline":"Building a Neural Network in Pure Lisp Without Built-In Numbers Using Only Atoms and Lists","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/blog/assets/main.css">
   
@@ -50,7 +50,7 @@
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Building a Neural Network in Pure Lisp without Built-in Numbers using only Atoms and Lists</h1>
+    <h1 class="post-title p-name" itemprop="name headline">Building a Neural Network in Pure Lisp Without Built-In Numbers Using Only Atoms and Lists</h1>
     <p class="post-meta">
       <time class="dt-published" datetime="2022-01-16T19:00:35+09:00" itemprop="datePublished">Jan 16, 2022
       </time></p>
@@ -246,7 +246,7 @@ which are converted to fixed-point vectors when being provided to the network.</
 
 <p>The dataset, as well as the fully connected neural network model, were inspired by
 a <a href="https://aidiary.hatenablog.com/entry/20050505/1274165051">blog post</a> (in Japanese)
-written by Koichiro Mori (<a href="https://profile.hatena.ne.jp/aidiary/">aidiary</a>).</p>
+about pattern recognition using neural networks, written by Koichiro Mori (<a href="https://profile.hatena.ne.jp/aidiary/">aidiary</a>).</p>
 
 <p>The upper half is the training dataset that is used to train the neural network.
 The bottom half is the testing dataset, which is not shown at all to the network at training time,
@@ -561,7 +561,7 @@ Therefore, it is a little odd to drop the significant bits, but this implementat
 <span class="p">(</span><span class="k">QUOTE</span>
 </code></pre></div></div>
 
-<p><code class="language-html highlighter-rouge">u0</code> indicates unsigned integer zero, and <code class="language-html highlighter-rouge">fracbitsize</code> is a list of length 13 indicating the fraction part’s bit size.</p>
+<p><code class="language-html highlighter-rouge">u0</code> indicates the unsigned integer zero, and <code class="language-html highlighter-rouge">fracbitsize</code> is a list of length 13 indicating the fraction part’s bit size.</p>
 
 <p><code class="language-html highlighter-rouge">take</code> and <code class="language-html highlighter-rouge">drop</code> are defined as follows:</p>
 
