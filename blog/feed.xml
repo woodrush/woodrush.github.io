@@ -1,4 +1,909 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-01-14T17:06:55+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">A Lisp Interpreter Implemented in Conway’s Game of Life</title><link href="https://woodrush.github.io/blog/posts/2022-01-12-lisp-in-life.html" rel="alternate" type="text/html" title="A Lisp Interpreter Implemented in Conway’s Game of Life" /><published>2022-01-12T18:01:35+09:00</published><updated>2022-01-12T18:01:35+09:00</updated><id>https://woodrush.github.io/blog/posts/lisp-in-life</id><content type="html" xml:base="https://woodrush.github.io/blog/posts/2022-01-12-lisp-in-life.html"><![CDATA[<p><a href="/blog/assets/posts/2022-01-12-lisp-in-life/ss2.png"><img src="/blog/assets/posts/2022-01-12-lisp-in-life/ss2.png" alt="A screenshot of the Lisp in Life architecture." /></a></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-01-16T20:25:29+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">Building a Neural Network in Pure Lisp without Built-in Numbers using only Atoms and Lists</title><link href="https://woodrush.github.io/blog/posts/2022-01-16-neural-networks-in-pure-lisp.html" rel="alternate" type="text/html" title="Building a Neural Network in Pure Lisp without Built-in Numbers using only Atoms and Lists" /><published>2022-01-16T19:00:35+09:00</published><updated>2022-01-16T19:00:35+09:00</updated><id>https://woodrush.github.io/blog/posts/neural-networks-in-pure-lisp</id><content type="html" xml:base="https://woodrush.github.io/blog/posts/2022-01-16-neural-networks-in-pure-lisp.html"><![CDATA[<p><a href="/blog/assets/posts/2022-01-16/nn-diagram-bg.svg"><img src="/blog/assets/posts/2022-01-16/nn-diagram.svg" alt="A diagram of our neural network." /></a></p>
+
+<p>At the dawn of Lisp after its birth in 1958, Lisp was used as a language for creating advanced artificial intelligence.
+This project makes that a reality once again by implementing a neural network for pattern recognition
+written in pure lisp without built-in integers or floating-point numbers, that runs on the IBM PC model 5150.</p>
+
+<h2 id="building-neural-networks-only-using-symbolic-manipulation">Building Neural Networks only using Symbolic Manipulation</h2>
+<p><a href="https://justine.lol/sectorlisp2/">SectorLISP</a> is an amazing project
+where a fully functional Lisp interpreter is fit into the 512 bytes of the boot sector of a floppy disk.
+Since it works as a boot sector program, the binary can be written to a disk to be used as a boot drive,
+where the computer presents an interface for writing and evaluating Lisp programs,
+all running in the booting phase of bare metal on the 436-byte program.
+I have written another blog post on SectorLISP about
+<a href="/blog/posts/2022-01-12-sectorlisp-io.html">extending SectorLISP to implement BASIC REPLs and games</a>.</p>
+
+<p>SectorLISP is implemented as a pure Lisp. In pure Lisp, there are <em>no</em> built-in types for integers or floating-point numbers,
+and only supports atoms and lists as available data structures.
+Surprisingly, even with the lack of numbers, such a Lisp is Turing-complete,
+meaning that it is basically capable of any calculation that can be done on modern computers.</p>
+
+<p>In this project, we implement a neural network that runs on SectorLISP.
+Since there are no features of built-in numbers, we have to reinvent the notion of numbers from scratch only by using symbolic manipulation.
+We first start off by constructing a fixed-point number calculation system based solely on list manipulations,
+and finally, implement matrix multiplication and activation functions using this fixed-point number system.</p>
+
+<p>Since SectorLISP runs on the IBM PC model 5150,
+this implementation allows neural networks to run on the booting phase of vintage PCs.</p>
+
+<h2 id="running-the-neural-network-on-your-computer">Running the Neural Network on Your Computer</h2>
+<p>The source code for the SectorLISP neural network, as well as the training and testing scripts
+used to obtain the model parameters, are available at my GitHub repository:</p>
+
+<p><a href="https://github.com/woodrush/sectorlisp-nn">https://github.com/woodrush/sectorlisp-nn</a></p>
+
+<p>Here I will describe the instructions for running the SectorLISP program
+to calculate predictions for custom digit images in detail.
+The instructions for training and evaluating the neural network
+to obtain the model parameters used for this network is available at the repository.</p>
+
+<h3 id="running-the-sectorlisp-program">Running the SectorLISP Program</h3>
+<p>Here are the instructions for running the neural network implemented in SectorLISP.</p>
+
+<p>First, <code class="language-html highlighter-rouge">git clone</code> the SectorLISP repository and <code class="language-html highlighter-rouge">make</code> SectorLISP’s binary, <code class="language-html highlighter-rouge">sectorlisp.bin</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>git clone https://github.com/jart/sectorlisp
+<span class="nb">cd </span>sectorlisp
+git checkout io
+make
+</code></pre></div></div>
+
+<p>This will generate <code class="language-html highlighter-rouge">sectorlisp.bin</code> under <code class="language-html highlighter-rouge">./sectorlisp</code>.</p>
+
+<p>By building a <a href="https://woodrush.github.io/blog/posts/2022-01-12-sectorlisp-io.html">fork</a>
+of SectorLISP that supports I/O, an additional output with some messages indicating the input and the output will become printed.
+Since the source code for this project is backwards comptible with the main SectorLISP branch,
+the same code can be run on both versions.</p>
+
+<p>To run SectorLISP on the i8086 emulator <a href="https://justine.lol/blinkenlights/">Blinkenlights</a>,
+first follow the instructions on its <a href="https://justine.lol/blinkenlights/download.html">download page</a>
+and get the latest version:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>curl https://justine.lol/blinkenlights/blinkenlights-latest.com <span class="o">&gt;</span>blinkenlights.com
+<span class="nb">chmod</span> +x blinkenlights.com
+</code></pre></div></div>
+
+<p>You can then run SectorLISP by running:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>./blinkenlights.com <span class="nt">-rt</span> sectorlisp.bin
+</code></pre></div></div>
+
+<p>In some cases, there might be a graphics-related error showing and the emulator may not start.
+In that case, run the following command first available on the download page:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="nb">sudo </span>sh <span class="nt">-c</span> <span class="s2">"echo ':APE:M::MZqFpD::/bin/sh:' &gt;/proc/sys/fs/binfmt_misc/register"</span>
+</code></pre></div></div>
+
+<p>Running this command should allow you to run Blinkenlights on your terminal.</p>
+
+<p>After starting Blinkenlights,
+expand the size of your terminal large enough so that the <code class="language-html highlighter-rouge">TELETYPEWRITER</code> region shows up
+at the center of the screen.
+This region is the console used for input and output.
+Then, press <code class="language-html highlighter-rouge">c</code> to run the emulator in continuous mode.
+The cursor in the <code class="language-html highlighter-rouge">TELETYPEWRITER</code> region should move one line down.
+You can then start typing in text or paste a long code from your terminal into Blinkenlight’s console
+to run your Lisp program.</p>
+
+<p>To run the neural network program, copy the contents of <a href="https://github.com/woodrush/sectorlisp-nn/blob/main/nn.lisp">nn.lisp</a>
+from the repository to your clipboard, and paste it inside the terminal into Blinkenlight’s console.
+After waiting for a few minutes, the result will be shown on the console.</p>
+
+<p>To input a custom 3x5 digit image,
+edit <a href="https://github.com/woodrush/sectorlisp-nn/blob/main/nn.lisp#L307-L314">the following expression</a> at the end of the program:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code> <span class="p">(</span><span class="k">QUOTE</span>
+   <span class="c1">;; input</span>
+ <span class="p">)</span>
+ <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span>
+         <span class="nv">*</span> <span class="nv">.</span> <span class="nv">.</span>
+         <span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span>
+         <span class="nv">.</span> <span class="nv">.</span> <span class="nv">*</span>
+         <span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h3 id="running-on-physical-hardware">Running on Physical Hardware</h3>
+<p>You can also run SectorLISP on an actual physical machine if you have a PC with an Intel CPU that boots with a BIOS,
+and a drive such as a USB drive or a floppy disk that can be used as a boot drive.
+First, mount your drive to the PC you’ve built sectorlisp.bin on, and check:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>lsblk <span class="nt">-o</span> KNAME,TYPE,SIZE,MODEL
+</code></pre></div></div>
+
+<p>Among the list of the hardware, check for the device name for your drive you want to write SectorLISP onto.
+After making sure of the device name, run the following command, replacing <code class="language-html highlighter-rouge">[devicename]</code> with your device name.
+<code class="language-html highlighter-rouge">[devicename]</code> should be values such as <code class="language-html highlighter-rouge">sda</code> or <code class="language-html highlighter-rouge">sdb</code>, depending on your setup.</p>
+
+<p><strong>Caution:</strong> The following command used for writing to the drive
+will overwrite anything that exists in the target drive’s boot sector,
+so it’s important to make sure which drive you’re writing into.
+If the command or the device name is wrong,
+it may overwrite the entire content of your drive or other drives mounted in your PC,
+probably causing your computer to be unbootable
+(or change your PC to a SectorLISP machine that always boots SectorLISP,
+which is cool, but is hard to recover from).
+Please perform these steps with extra care, and at your own risk.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="nb">sudo dd </span><span class="k">if</span><span class="o">=</span>sectorlisp.bin <span class="nv">of</span><span class="o">=</span>/dev/[devicename] <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">count</span><span class="o">=</span>1
+</code></pre></div></div>
+
+<p>After you have written your boot drive, insert the drive to the PC you want to boot it from.
+You may have to change the boot priority settings from the BIOS to make sure the PC boots from the target drive.
+When the drive boots successfully, you should see a cursor blinking in a blank screen,
+which indicates that you’re ready to type your Lisp code into bare metal.</p>
+
+<p>We will now discuss the implementation details of this project.</p>
+
+<h2 id="training-the-neural-network">Training the Neural Network</h2>
+<p>We first start off by training a neural network on a modern computer using TensorFlow to get its model parameters.
+The parameters are then converted to 18-bit fixed-point numbers when loading to the SectorLISP program.</p>
+
+<h3 id="the-dataset">The Dataset</h3>
+<p><strong>Training Dataset</strong></p>
+
+<p><a href="/blog/assets/posts/2022-01-16/train_0_0.png"><img src="/blog/assets/posts/2022-01-16/train_0_0.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_1_1.png"><img src="/blog/assets/posts/2022-01-16/train_1_1.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_2_2.png"><img src="/blog/assets/posts/2022-01-16/train_2_2.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_3_3.png"><img src="/blog/assets/posts/2022-01-16/train_3_3.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_4_4.png"><img src="/blog/assets/posts/2022-01-16/train_4_4.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_5_5.png"><img src="/blog/assets/posts/2022-01-16/train_5_5.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_6_6.png"><img src="/blog/assets/posts/2022-01-16/train_6_6.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_7_7.png"><img src="/blog/assets/posts/2022-01-16/train_7_7.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_8_8.png"><img src="/blog/assets/posts/2022-01-16/train_8_8.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_9_9.png"><img src="/blog/assets/posts/2022-01-16/train_9_9.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_1_10.png"><img src="/blog/assets/posts/2022-01-16/train_1_10.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_1_11.png"><img src="/blog/assets/posts/2022-01-16/train_1_11.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_4_12.png"><img src="/blog/assets/posts/2022-01-16/train_4_12.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_7_13.png"><img src="/blog/assets/posts/2022-01-16/train_7_13.png" alt="Training images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/train_7_14.png"><img src="/blog/assets/posts/2022-01-16/train_7_14.png" alt="Training images from the dataset." /></a></p>
+
+<p><strong>Test Dataset</strong></p>
+
+<p><a href="/blog/assets/posts/2022-01-16/test_0_0.png"><img src="/blog/assets/posts/2022-01-16/test_0_0.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_0_1.png"><img src="/blog/assets/posts/2022-01-16/test_0_1.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_1_2.png"><img src="/blog/assets/posts/2022-01-16/test_1_2.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_1_3.png"><img src="/blog/assets/posts/2022-01-16/test_1_3.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_2_4.png"><img src="/blog/assets/posts/2022-01-16/test_2_4.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_2_5.png"><img src="/blog/assets/posts/2022-01-16/test_2_5.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_3_6.png"><img src="/blog/assets/posts/2022-01-16/test_3_6.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_3_7.png"><img src="/blog/assets/posts/2022-01-16/test_3_7.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_4_8.png"><img src="/blog/assets/posts/2022-01-16/test_4_8.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_4_9.png"><img src="/blog/assets/posts/2022-01-16/test_4_9.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_5_10.png"><img src="/blog/assets/posts/2022-01-16/test_5_10.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_5_11.png"><img src="/blog/assets/posts/2022-01-16/test_5_11.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_6_12.png"><img src="/blog/assets/posts/2022-01-16/test_6_12.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_6_13.png"><img src="/blog/assets/posts/2022-01-16/test_6_13.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_7_14.png"><img src="/blog/assets/posts/2022-01-16/test_7_14.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_7_15.png"><img src="/blog/assets/posts/2022-01-16/test_7_15.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_8_16.png"><img src="/blog/assets/posts/2022-01-16/test_8_16.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_8_17.png"><img src="/blog/assets/posts/2022-01-16/test_8_17.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_9_18.png"><img src="/blog/assets/posts/2022-01-16/test_9_18.png" alt="Testing images from the dataset." /></a>
+<a href="/blog/assets/posts/2022-01-16/test_9_19.png"><img src="/blog/assets/posts/2022-01-16/test_9_19.png" alt="Testing images from the dataset." /></a></p>
+
+<p>The entire dataset for training and testing this neural network is shown above.
+The input images are 3x15-sized binary monochrome images,
+which are converted to fixed-point vectors when being provided to the network.</p>
+
+<p>The dataset, as well as the fully connected neural network model, were inspired by
+a <a href="https://aidiary.hatenablog.com/entry/20050505/1274165051">blog post</a> (in Japanese)
+written by Koichiro Mori (<a href="https://profile.hatena.ne.jp/aidiary/">aidiary</a>).</p>
+
+<p>The upper half is the training dataset that is used to train the neural network.
+The bottom half is the testing dataset, which is not shown at all to the network at training time,
+and will be shown for the first time when evaluating the neural network’s performance,
+to check if the digits for these newly shown images are predicted correctly.</p>
+
+<p>In the final Lisp program, the input image is provided as follows:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; input</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span>
+        <span class="nv">*</span> <span class="nv">.</span> <span class="nv">.</span>
+        <span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span>
+        <span class="nv">.</span> <span class="nv">.</span> <span class="nv">*</span>
+        <span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h3 id="the-model">The Model</h3>
+<p>The model for our neural network is very simple.
+It is a two-layered fully connected network with a ReLU activation function:</p>
+
+<p><a href="/blog/assets/posts/2022-01-16/nn-diagram.svg"><img src="/blog/assets/posts/2022-01-16/nn-diagram.svg" alt="A diagram of our neural network." /></a></p>
+
+<p>In TensorFlow, it is written like this:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">models</span><span class="p">.</span><span class="n">Sequential</span><span class="p">([</span>
+  <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">layers</span><span class="p">.</span><span class="n">Flatten</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+  <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">layers</span><span class="p">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"relu"</span><span class="p">),</span>
+  <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">layers</span><span class="p">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span>
+  <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">layers</span><span class="p">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
+<span class="p">])</span>
+</code></pre></div></div>
+
+<p>The model and its implementation were referenced from the <a href="https://www.tensorflow.org/tutorials/quickstart/beginner">TensorFlow 2 quickstart for beginners</a>
+entry from the TensorFlow documentation.
+As mentioned before, the fully-connected model was also inspired by
+a <a href="https://aidiary.hatenablog.com/entry/20050505/1274165051">blog post</a> (in Japanese)
+written by Koichiro Mori (<a href="https://profile.hatena.ne.jp/aidiary/">aidiary</a>).</p>
+
+<p>This model takes a 3x5 image and outputs a 1x10 vector,
+where each element represents the log-confidence of each digit from 0 to 9.
+The final prediction result of the neural network is defined by observing the index that has the largest value in the output 1x10 vector.</p>
+
+<p>Each fully connected neural network contains two trainable tensors <code class="language-html highlighter-rouge">A</code> and <code class="language-html highlighter-rouge">B</code>, which are the coefficient matrix and the bias vectors, respectively.
+This network thus consists of 4 model parameter tensors, <code class="language-html highlighter-rouge">A_1</code>, <code class="language-html highlighter-rouge">B_1</code>, <code class="language-html highlighter-rouge">A_2</code>, and <code class="language-html highlighter-rouge">B_2</code>,
+each of size 15x10, 10x1, 10x10, and 10x1, respectively.</p>
+
+<p>The Dropout function is included for inducing generalization and is only activated at training time.</p>
+
+<p>We use the categorical cross-entropy loss and the Adam optimizer for training:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="n">model</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s">"adam"</span><span class="p">,</span>
+             <span class="n">loss</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">losses</span><span class="p">.</span><span class="n">SparseCategoricalCrossentropy</span><span class="p">(</span><span class="n">from_logits</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+             <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s">"accuracy"</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>The model is then trained for 1000 epochs:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="n">model</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data_x</span><span class="p">,</span> <span class="n">data_y_category</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>After training, the model parameters are saved:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="n">model</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="s">"params.h5"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The model parameters <code class="language-html highlighter-rouge">A_1</code>, <code class="language-html highlighter-rouge">B_1</code>, <code class="language-html highlighter-rouge">A_2</code>, and <code class="language-html highlighter-rouge">B_2</code> are contained in this file.
+Since each model parameter has the sizes 15x10, 10x1, 10x10, and 10x1,
+the total number of fixed-point numbers is 1620.
+Since we are using 18 bits for each fixed-point number,
+the total number of bits for the model parameters of the entire neural network is 29160 bits.</p>
+
+<p>Note that although fixed-point numbers are used in the final Lisp implementation,
+the training process uses 64-bit floating-point numbers.
+Since the number of layers and the matrix sizes were both small enough for truncating the precision,
+we were able to directly convert the trained floating-point model parameter values
+to fixed-point numbers when loading them into the Lisp implementation.</p>
+
+<h3 id="testing-for-noise-resistance">Testing for Noise Resistance</h3>
+<p>The training accuracy was 100%, meaning that all of the 15 images in the training dataset
+are correctly predicted to the true digit.</p>
+
+<p>The testing accuracy was 85%, meaning that 17 out of 20 newly seen images
+that were <em>not</em> shown at all during training were predicted correctly.</p>
+
+<p>Here is the confusion matrix for the test dataset:</p>
+
+<p><a href="/blog/assets/posts/2022-01-16/confusion_matrix.png"><img src="/blog/assets/posts/2022-01-16/confusion_matrix.png" alt="The confusion matrix for the test dataset." /></a></p>
+
+<p>In the case for a 100% accuracy performance, the matrix becomes completely diagonal,
+meaning that the prediction results always match the ground truth labels.
+The three off-diagonal elements indicate the 3 prediction errors that occurred at test time.</p>
+
+<p>Here are the 3 images that were not predicted correctly:</p>
+
+<table>
+<thead>
+  <th>Test Dataset Image</th>
+  <th>Prediction</th>
+</thead>
+<tr>
+  <td>
+    <a href="/blog/assets/posts/2022-01-16/test_2_5.png"><img src="/blog/assets/posts/2022-01-16/test_2_5.png" alt="Testing images from the dataset." /></a>
+  </td>
+  <td>1</td>
+</tr>
+<tr>
+  <td>
+    <a href="/blog/assets/posts/2022-01-16/test_8_16.png"><img src="/blog/assets/posts/2022-01-16/test_8_16.png" alt="Testing images from the dataset." /></a>
+  </td>
+  <td>3</td>
+</tr>
+<tr>
+  <td>
+    <a href="/blog/assets/posts/2022-01-16/test_9_18.png"><img src="/blog/assets/posts/2022-01-16/test_9_18.png" alt="Testing images from the dataset." /></a>
+  </td>
+  <td>4</td>
+</tr>
+</table>
+
+<p>Since all of the other images were predicted correctly, this means that the neural network was able to
+correctly predict 85% of the unknown data that was <em>never shown</em> at training time.
+This capability of flexible generalization for newly encountered images is a core feature of neural networks.</p>
+
+<h2 id="implementing-neural-networks-in-pure-lisp">Implementing Neural Networks in Pure Lisp</h2>
+<blockquote>
+  <p>“Lisp has jokingly been called “the most intelligent way to misuse a computer”.
+I think that description is a great compliment because it transmits the full flavor of liberation:
+it has assisted a number of our most gifted fellow humans in thinking previously impossible thoughts.”
+– Edsger W. Dijkstra</p>
+</blockquote>
+
+<p>Now that we have obtained the model parameters for our neural network,
+it’s time to build it into pure Lisp.</p>
+
+<p>As explained in the <a href="https://justine.lol/sectorlisp2/">SectorLISP blog post</a>,
+SectorLISP does not have a built-in feature for integers or floating-point numbers.
+The only data structures that SectorLISP has are lists and atoms,
+so we must implement a system for calculating fractional numbers only by manipulating lists of atoms.
+Our goal is to implement matrix multiplication in fixed-point numbers.</p>
+
+<p>The fixed-point number system used in this project is also available as a SectorLISP library
+at my <a href="https://github.com/woodrush/libsectorlisp">libsectorlisp</a> GitHub repo.</p>
+
+<h3 id="the-number-representations">The Number Representations</h3>
+<p>The number system for this project will be 18-bit fixed-point numbers,
+with 13 bits for the fractional part, 4 bits for the integer part, and 1 bit for the sign.</p>
+
+<p>Here are some examples of numbers expressed in this fixed-point system:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>    <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span><span class="p">))</span> <span class="c1">;; Zero</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>    <span class="nv">1</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span><span class="p">))</span> <span class="c1">;; One</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">1</span>    <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span><span class="p">))</span> <span class="c1">;; 0.5</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">1</span> <span class="nv">0</span>    <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span><span class="p">))</span> <span class="c1">;; 0.25</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>    <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span><span class="p">))</span> <span class="c1">;; -1</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">1</span>    <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span><span class="p">))</span> <span class="c1">;; -0.5</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">1</span> <span class="nv">1</span>    <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span><span class="p">))</span> <span class="c1">;; -0.25</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">1</span>  <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span>  <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span>  <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span>    <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span> <span class="nv">1</span><span class="p">))</span> <span class="c1">;; Negative epsilon (-2^13)</span>
+<span class="c1">;;     |----------------------------|  |------||-|</span>
+<span class="c1">;;            Fractional part       Integer part \Sign bit</span>
+</code></pre></div></div>
+
+<h3 id="half-adder">Half Adder</h3>
+<p>We first start by making a <a href="https://en.wikipedia.org/wiki/Adder_(electronics)#Half_adder">half adder</a>,
+which computes single-digit binary addition.
+A half adder takes the binary single-digit variables <code class="language-html highlighter-rouge">A</code> and <code class="language-html highlighter-rouge">B</code> and outputs a pair of variables
+<code class="language-html highlighter-rouge">S</code> and <code class="language-html highlighter-rouge">C</code>, each representing the sum and the carry flag.
+The carry <code class="language-html highlighter-rouge">C</code> occurs when both input numbers are <code class="language-html highlighter-rouge">1</code> needing a carry digit for addition.
+Therefore, it can be written as:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; addhalf : Half adder</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">COND</span>
+    <span class="p">((</span><span class="k">EQ</span> <span class="nv">X</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">1</span><span class="p">))</span>
+     <span class="p">(</span><span class="k">COND</span>
+       <span class="p">((</span><span class="k">EQ</span> <span class="nv">Y</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">1</span><span class="p">))</span> <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">0</span><span class="p">)</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">1</span><span class="p">)))</span>
+       <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">1</span><span class="p">)</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">0</span><span class="p">)))))</span>
+    <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">CONS</span> <span class="nv">Y</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">0</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<h3 id="full-adder">Full Adder</h3>
+<p>Next we make a <a href="https://en.wikipedia.org/wiki/Adder_(electronics)#Full_adder">full adder</a>.
+A full adder also computes single-digit binary addition, except it takes 3 variables including the carry digit,
+<code class="language-html highlighter-rouge">A</code>, <code class="language-html highlighter-rouge">B</code>, and <code class="language-html highlighter-rouge">C</code>, and outputs the pair <code class="language-html highlighter-rouge">S</code> and <code class="language-html highlighter-rouge">C</code> for the sum and the carry flag.
+Including <code class="language-html highlighter-rouge">C</code> will help to recursively compute multiple-digit addition in the next section.
+This can be written as:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; addfull : Full adder</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span> <span class="nv">C</span><span class="p">)</span>
+  <span class="p">((</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">HA1</span><span class="p">)</span>
+     <span class="p">((</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">HA2</span><span class="p">)</span>
+        <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">HA2</span><span class="p">)</span>
+              <span class="p">(</span><span class="k">COND</span>
+                <span class="p">((</span><span class="k">EQ</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">1</span><span class="p">)</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">HA1</span><span class="p">))</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">1</span><span class="p">))</span>
+                <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">HA2</span><span class="p">)))))</span>
+      <span class="p">(</span><span class="nv">addhalf</span> <span class="nv">C</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">HA1</span><span class="p">))))</span>
+   <span class="p">(</span><span class="nv">addhalf</span> <span class="nv">X</span> <span class="nv">Y</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<h3 id="unsigned-integer-addition">Unsigned Integer Addition</h3>
+<p>Now that we have constructed a full adder, we can recursively connect these full adders
+to construct a multiple-binary-digit adder.
+We first start off by constructing an adder for unsigned integers.</p>
+
+<p>Addition is done by first adding the least significant bits, computing the sum and the carry,
+and then adding the next significant bits as well as the carry flag if it exists.
+Since the full adder does just this for each digit, we can recursively connect
+full adders together to make a multiple-digit adder:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; uaddnofc : Unsigned N-bit add with carry</span>
+  <span class="c1">;;            The output binary is in reverse order (the msb is at the end)</span>
+  <span class="c1">;;            The same applies to the entire system</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span> <span class="nv">C</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">COND</span>
+    <span class="p">((</span><span class="k">EQ</span> <span class="nc">NIL</span> <span class="nv">X</span><span class="p">)</span> <span class="nv">Y</span><span class="p">)</span>
+    <span class="p">((</span><span class="k">EQ</span> <span class="nc">NIL</span> <span class="nv">Y</span><span class="p">)</span> <span class="nv">X</span><span class="p">)</span>
+    <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span>
+     <span class="p">((</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">XYC</span><span class="p">)</span>
+        <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">XYC</span><span class="p">)</span> <span class="p">(</span><span class="nv">uaddnofc</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">Y</span><span class="p">)</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">XYC</span><span class="p">))))</span>
+      <span class="p">(</span><span class="nv">addfull</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">Y</span><span class="p">)</span> <span class="nv">C</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<p>Here, <code class="language-html highlighter-rouge">X</code> and <code class="language-html highlighter-rouge">Y</code> are multiple-digit numbers such as <code class="language-html highlighter-rouge">(QUOTE (0  0 0 0 0  0 0 0 0  0 0 0 0    1 0 0 0 0)) ;; One</code>,
+and <code class="language-html highlighter-rouge">C</code> is a single-digit carry flag.</p>
+
+<p>This is where the reverse-ordered binary list format becomes useful.
+Since addition is started by adding the least significant bits first,
+we can immediately extract this bit just by applying <code class="language-html highlighter-rouge">(CAR X)</code> to the numbers.</p>
+
+<p>The <code class="language-html highlighter-rouge">u</code> stands for unsigned, <code class="language-html highlighter-rouge">addn</code> means the addition of N (arbitrary) digits, <code class="language-html highlighter-rouge">of</code> means that overflow is prevented, <code class="language-html highlighter-rouge">c</code> means that there is a carry flag as an argument.
+Since overflow is prevented, this means that the resulting sum may become one digit longer than the original inputs <code class="language-html highlighter-rouge">X</code> and <code class="language-html highlighter-rouge">Y</code>,
+instead of overflowing to zero.
+This is compensated later in other functions.</p>
+
+<p>Finally, to add two unsigned integers <code class="language-html highlighter-rouge">X</code> and <code class="language-html highlighter-rouge">Y</code>, we wrap <code class="language-html highlighter-rouge">uaddnofc</code> with the carry flag initially set to <code class="language-html highlighter-rouge">0</code>,
+for unsigned integer addition:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; uaddnof : Unsigned N-bit add</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">uaddnofc</span> <span class="nv">X</span> <span class="nv">Y</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">0</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<h3 id="unsigned-integer-multiplication">Unsigned Integer Multiplication</h3>
+<p>Multiplication can be done similarly with addition, except we add multiple digits instead of one in each step.
+In multiplication, we recursively shift <code class="language-html highlighter-rouge">X</code> one by one bit and add them up,
+when the corresponding digit in <code class="language-html highlighter-rouge">Y</code> is <code class="language-html highlighter-rouge">1</code>.
+When the digit in <code class="language-html highlighter-rouge">Y</code> is <code class="language-html highlighter-rouge">0</code>, we add nothing.
+Shifting <code class="language-html highlighter-rouge">X</code> to the right has the effect of multiplying the number by 2.
+Note that the shifting effect is reversed since the bit order is reversed.</p>
+
+<p>Following this design, unsigned integer multiplication is implemented as follows:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; umultnof : Unsigned N-bit mult</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">COND</span>
+    <span class="p">((</span><span class="k">EQ</span> <span class="nc">NIL</span> <span class="nv">Y</span><span class="p">)</span> <span class="nv">u0</span><span class="p">)</span>
+    <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span>
+     <span class="p">(</span><span class="nv">uaddnof</span> <span class="p">(</span><span class="k">COND</span>
+                <span class="p">((</span><span class="k">EQ</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">0</span><span class="p">)</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">Y</span><span class="p">))</span> <span class="nv">u0</span><span class="p">)</span>
+                <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="nv">X</span><span class="p">))</span>
+              <span class="p">(</span><span class="nv">umultnof</span> <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">0</span><span class="p">)</span> <span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">Y</span><span class="p">)))))))</span>
+</code></pre></div></div>
+
+<h3 id="unsigned-fixed-point-addition">Unsigned Fixed-Point Addition</h3>
+<p>Now we are ready to start thinking about fixed-point numbers.
+In fact, we have already implemented unsigned fixed-point addition at this point.
+This is because of the most significant feature for fixed-point numbers,
+where addition and subtraction can be implemented exactly the same as signed integers.</p>
+
+<p>This is because fixed-point numbers can be thought of as signed integers with a
+fixed exponent bias <code class="language-html highlighter-rouge">2^N</code>. Since the fraction part for our system is 13, the exponent bias is
+<code class="language-html highlighter-rouge">2^(-13)</code> for our system.
+Therefore, for two numbers <code class="language-html highlighter-rouge">A_fix</code> and <code class="language-html highlighter-rouge">B_fix</code>, we represent these numbers using an underlying integer <code class="language-html highlighter-rouge">A</code> and <code class="language-html highlighter-rouge">B</code>,
+as <code class="language-html highlighter-rouge">A_fix == A * 2^(-13)</code>, <code class="language-html highlighter-rouge">B_fix == B * 2^(-13)</code>.</p>
+
+<p>Now, when calculating <code class="language-html highlighter-rouge">A_fix + B_fix</code>, the exponent <code class="language-html highlighter-rouge">2^(-13)</code> can be factored out,
+leaving <code class="language-html highlighter-rouge">(A+B)*2^(-13)</code>. Therefore, we can directly use unsigned integer addition for unsigned fixed-point addition.</p>
+
+<h3 id="unsigned-fixed-point-multiplication">Unsigned Fixed-Point Multiplication</h3>
+<p>Multiplication is similar except that the exponent bias changes.
+For <code class="language-html highlighter-rouge">A_fix * B_fix</code> in the previous example, the result becomes <code class="language-html highlighter-rouge">(A*B)*2^(-26)</code>, with a smaller exponent bias factor.
+Here, we have a gigantic number <code class="language-html highlighter-rouge">A*B</code> compensated with the small exponent bias factor <code class="language-html highlighter-rouge">2^(-26)</code>.
+Therefore, to adjust the exponent bias factor, we can divide <code class="language-html highlighter-rouge">A*B</code> by <code class="language-html highlighter-rouge">2^13</code>, and drop the exponent bias factor to <code class="language-html highlighter-rouge">2^(-13)</code>.
+In this case, dividing by <code class="language-html highlighter-rouge">2^13</code> means to drop 13 of the least significant bits and to keep the rest.</p>
+
+<p>In the case where the output number still has a bit length longer than <code class="language-html highlighter-rouge">A</code> and <code class="language-html highlighter-rouge">B</code>,
+this means that the result overflowed and cannot be captured by the number of bits in our system.
+This is the difference between floating-point numbers.
+For floating-point numbers, the most significant bit can always be preserved by moving around the decimal point.
+In fixed-point numbers, on the other hand, large numbers must have their significant bits discarded since the decimal point is fixed.
+Therefore, it is a little odd to drop the significant bits, but this implementation yields the correct results.</p>
+
+<p>Following this design, we can implement unsigned fixed-point multiplication as follows:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; ufixmult : Unsigned fixed-point multiplication</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">take</span> <span class="nv">u0</span> <span class="p">(</span><span class="nv">drop</span> <span class="nv">fracbitsize</span> <span class="p">(</span><span class="nv">umultnof</span> <span class="nv">X</span> <span class="nv">Y</span><span class="p">)))))</span>
+<span class="p">(</span><span class="k">QUOTE</span>
+</code></pre></div></div>
+
+<p><code class="language-html highlighter-rouge">u0</code> indicates unsigned integer zero, and <code class="language-html highlighter-rouge">fracbitsize</code> is a list of length 13 indicating the fraction part’s bit size.</p>
+
+<p><code class="language-html highlighter-rouge">take</code> and <code class="language-html highlighter-rouge">drop</code> are defined as follows:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; take : Take a list of (len L) atoms from X</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">L</span> <span class="nv">X</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">COND</span>
+    <span class="p">((</span><span class="k">EQ</span> <span class="nc">NIL</span> <span class="nv">L</span><span class="p">)</span> <span class="nc">NIL</span><span class="p">)</span>
+    <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="nv">take</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">L</span><span class="p">)</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">X</span><span class="p">)))))))</span>
+<span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; drop : Drop the first (len L) atoms from X</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">L</span> <span class="nv">X</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">COND</span>
+    <span class="p">((</span><span class="k">EQ</span> <span class="nc">NIL</span> <span class="nv">X</span><span class="p">)</span> <span class="nc">NIL</span><span class="p">)</span>
+    <span class="p">((</span><span class="k">EQ</span> <span class="nc">NIL</span> <span class="nv">L</span><span class="p">)</span> <span class="nv">X</span><span class="p">)</span>
+    <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="p">(</span><span class="nv">drop</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">L</span><span class="p">)</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">X</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<h3 id="negation">Negation</h3>
+<p>Now we will start taking the signs of the numbers into account.</p>
+
+<p>In our fixed-point number system, negative numbers are expressed by taking the two’s complement of a number.
+Negation using two’s complement is best understood as taking the <a href="https://en.wikipedia.org/wiki/Additive_inverse">additive inverse</a> of the number in <code class="language-html highlighter-rouge">mod (2^13)-1</code>.
+This yields a very simple implementation for negation:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; negate : Two's complement of int</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">N</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">take</span> <span class="nv">u0</span> <span class="p">(</span><span class="nv">umultnof</span> <span class="nv">N</span> <span class="nv">umax</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<p>Here, <code class="language-html highlighter-rouge">umax</code> is a number filled with <code class="language-html highlighter-rouge">1</code>, <code class="language-html highlighter-rouge">(QUOTE (1  1 1 1 1  1 1 1 1  1 1 1 1    1 1 1 1 1))</code>.
+When added by the smallest positive number <code class="language-html highlighter-rouge">(QUOTE (1  0 0 0 0  0 0 0 0  0 0 0 0    0 0 0 0 0))</code>,
+<code class="language-html highlighter-rouge">umax</code> overflows to <code class="language-html highlighter-rouge">u0</code> which is filled with <code class="language-html highlighter-rouge">0</code>, meaning the number zero.
+Since negative numbers are numbers that become zero when added with their absolute value,
+<code class="language-html highlighter-rouge">umax</code> represents the negative number with the smallest absolute value in our fixed-point number system.</p>
+
+<p>Similarly, multiplying by <code class="language-html highlighter-rouge">umax</code> yields a number with the same property where the number
+exactly overflows to zero with only one bit overflowing at the end.
+Since the addition function in fixed-point numbers is defined exactly the same as unsigned integers,
+this property means that the output of <code class="language-html highlighter-rouge">negate</code> works as negation in fixed-point numbers as well.
+Therefore, this implementation suffices to implement negation in our number system.</p>
+
+<h3 id="signed-fixed-point-subtraction">Signed Fixed-Point Subtraction</h3>
+<p>At this point, we can define our final operators for <code class="language-html highlighter-rouge">+</code> and <code class="language-html highlighter-rouge">-</code> used for fixed-point numbers:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; +</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">take</span> <span class="nv">u0</span> <span class="p">(</span><span class="nv">uaddnof</span> <span class="nv">X</span> <span class="nv">Y</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">0</span><span class="p">)))))</span>
+<span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; -</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">take</span> <span class="nv">u0</span> <span class="p">(</span><span class="nv">uaddnof</span> <span class="nv">X</span> <span class="p">(</span><span class="nv">negate</span> <span class="nv">Y</span><span class="p">)</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">0</span><span class="p">)))))</span>
+</code></pre></div></div>
+
+<p>Subtraction is implemented by adding the negated version of the second operand.</p>
+
+<p>We will now see how signed multiplication is implemented.</p>
+
+<h3 id="signed-fixed-point-multiplication">Signed Fixed-Point Multiplication</h3>
+<p>Signed fixed-point number multiplication is almost the same as unsigned ones,
+except that the signs of the numbers have to be managed carefully.
+Signed multiplication is implemented by reducing the operation to unsigned multiplication
+by negating the number beforehand if the operand is a negative number,
+and then negating back the result after multiplication.
+This simple consideration of signs yields the following implementation:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; *</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">COND</span>
+    <span class="p">((</span><span class="nv">&lt;</span> <span class="nv">X</span> <span class="nv">u0</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">COND</span>
+       <span class="p">((</span><span class="nv">&lt;</span> <span class="nv">Y</span> <span class="nv">u0</span><span class="p">)</span>
+        <span class="p">(</span><span class="nv">ufixmult</span> <span class="p">(</span><span class="nv">negate</span> <span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="nv">negate</span> <span class="nv">Y</span><span class="p">)))</span>
+       <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span>
+        <span class="p">(</span><span class="nv">negate</span> <span class="p">(</span><span class="nv">ufixmult</span> <span class="p">(</span><span class="nv">negate</span> <span class="nv">X</span><span class="p">)</span> <span class="nv">Y</span><span class="p">)))))</span>
+    <span class="p">((</span><span class="nv">&lt;</span> <span class="nv">Y</span> <span class="nv">u0</span><span class="p">)</span>
+     <span class="p">(</span><span class="nv">negate</span> <span class="p">(</span><span class="nv">ufixmult</span> <span class="nv">X</span> <span class="p">(</span><span class="nv">negate</span> <span class="nv">Y</span><span class="p">))))</span>
+    <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span>
+     <span class="p">(</span><span class="nv">ufixmult</span> <span class="nv">X</span> <span class="nv">Y</span><span class="p">)))))</span>
+</code></pre></div></div>
+
+<h3 id="comparison">Comparison</h3>
+<p>Comparison is first done by checking the sign of the numbers.
+If the signs of both operands are different, we can immediately deduce that one operand is less than another.
+In the case where the signs are the same for both operands, we subtract the absolute value of each operand
+and check if the result is less than zero, i.e., it is a negative number.</p>
+
+<p>So we start with a function that checks if a number is negative:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; isnegative</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">EQ</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">1</span><span class="p">)</span> <span class="p">(</span><span class="k">CAR</span> <span class="p">(</span><span class="nv">drop</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">u0</span><span class="p">)</span> <span class="nv">X</span><span class="p">)))))</span>
+</code></pre></div></div>
+
+<p>This can be done by simply checking if the sign bit at the end is <code class="language-html highlighter-rouge">1</code>,
+since we have defined to use two’s complement as the representation of negative numbers.</p>
+
+<p>We can then use this to write our algorithm mentioned before:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; &lt;</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">COND</span>
+    <span class="p">((</span><span class="nv">isnegative</span> <span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="k">COND</span>
+                      <span class="p">((</span><span class="nv">isnegative</span> <span class="nv">Y</span><span class="p">)</span> <span class="p">(</span><span class="nv">isnegative</span> <span class="p">(</span><span class="nv">-</span> <span class="p">(</span><span class="nv">negate</span> <span class="nv">Y</span><span class="p">)</span> <span class="p">(</span><span class="nv">negate</span> <span class="nv">X</span><span class="p">))))</span>
+                      <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">))))</span>
+    <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="p">(</span><span class="k">COND</span>
+                 <span class="p">((</span><span class="nv">isnegative</span> <span class="nv">Y</span><span class="p">)</span> <span class="nc">NIL</span><span class="p">)</span>
+                 <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="p">(</span><span class="nv">isnegative</span> <span class="p">(</span><span class="nv">-</span> <span class="nv">X</span> <span class="nv">Y</span><span class="p">))))))))</span>
+</code></pre></div></div>
+
+<p>Comparison in the other direction is done by simply reversing the operands:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; &gt;</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">&lt;</span> <span class="nv">Y</span> <span class="nv">X</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h3 id="division-by-powers-of-two">Division by Powers of Two</h3>
+<p>Although division for general numbers can be tricky,
+dividing by powers of two can be done by simply shifting the bits by the exponent of the divisor:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; &lt;&lt; : Shift X by Y_u bits, where Y_u is in unary.</span>
+  <span class="c1">;;      Note that since the bits are written in reverse order,</span>
+  <span class="c1">;;      this works as division and makes the input number smaller.</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y_u</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">+</span> <span class="p">(</span><span class="nv">drop</span> <span class="nv">Y_u</span> <span class="nv">X</span><span class="p">)</span> <span class="nv">u0</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>As mentioned in the comment, shifting left becomes division since we are using a reverse order representation for numbers.</p>
+
+<h3 id="relu">ReLU</h3>
+<p>At this point, we can actually implement our first neural-network-related function,
+the <a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">rectified linear unit</a> (ReLU).
+Although having an intimidating name, it is actually identical to numpy’s <code class="language-html highlighter-rouge">clip</code> function
+where certain numbers below a threshold are clipped to the threshold value.
+For ReLU, the threshold is zero and can be implemented by simply checking the input’s sign and
+returning zero if it is negative:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code> <span class="p">(</span><span class="k">QUOTE</span>
+   <span class="c1">;; ReLUscal</span>
+ <span class="p">)</span>
+ <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span>
+   <span class="p">(</span><span class="k">COND</span>
+     <span class="p">((</span><span class="nv">isnegative</span> <span class="nv">X</span><span class="p">)</span> <span class="nv">u0</span><span class="p">)</span>
+     <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="nv">X</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<p><code class="language-html highlighter-rouge">ReLUscal</code> takes scalar inputs. This is recursively applied inside <code class="language-html highlighter-rouge">ReLUvec</code> which accepts vector inputs.</p>
+
+<h3 id="vector-dot-products">Vector Dot Products</h3>
+<p>At this point, we have finished implementing all of the scalar operations required for
+constructing a fully-connected neural network!
+From now on we will write functions for multiple-element objects.</p>
+
+<p>The most simple one is the dot product of two vectors,
+which can be written by recursively adding the products of the elements of the input vectors:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; ================================================================</span>
+  <span class="c1">;; vdot : Vector dot product</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">COND</span>
+    <span class="p">(</span><span class="nv">X</span> <span class="p">(</span><span class="nv">+</span> <span class="p">(</span><span class="nv">*</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">Y</span><span class="p">))</span>
+          <span class="p">(</span><span class="nv">vdot</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">Y</span><span class="p">))))</span>
+    <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="nv">u0</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<p>Here, vectors are simply expressed as a list of scalars.
+The vector <code class="language-html highlighter-rouge">(1 2 3)</code> can be written as follows:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span> <span class="p">((</span><span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>    <span class="nv">1</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span><span class="p">)</span>
+        <span class="p">(</span><span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>    <span class="nv">0</span> <span class="nv">1</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span><span class="p">)</span>
+        <span class="p">(</span><span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>  <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span>    <span class="nv">1</span> <span class="nv">1</span> <span class="nv">0</span> <span class="nv">0</span> <span class="nv">0</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>Vector addition works similarly except we construct a list instead of calculating the sum:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; vecadd</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">Y</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">COND</span>
+    <span class="p">(</span><span class="nv">X</span> <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="nv">+</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">Y</span><span class="p">))</span> <span class="p">(</span><span class="nv">vecadd</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">Y</span><span class="p">))))</span>
+    <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="nc">NIL</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<h3 id="vector-matrix-multiplication">Vector-Matrix Multiplication</h3>
+<p>Surprisingly, we can jump to vector-matrix multiplication right away once we have vector dot products.
+We first implement matrices as a list of vectors.
+Since each element in a matrix is a vector, we can write vector-matrix multiplication
+by recursively iterating over each element of the input matrix:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; vecmatmulVAT : vec, mat -&gt; vec : Vector V times transposed matrix A</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">V</span> <span class="nv">AT</span><span class="p">)</span>
+  <span class="p">((</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">vecmatmulVAThelper</span><span class="p">)</span>
+     <span class="p">(</span><span class="nv">vecmatmulVAThelper</span> <span class="nv">AT</span><span class="p">))</span>
+   <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">AT</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">COND</span>
+       <span class="p">(</span><span class="nv">AT</span> <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="nv">vdot</span> <span class="nv">V</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">AT</span><span class="p">))</span> <span class="p">(</span><span class="nv">vecmatmulVAThelper</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">AT</span><span class="p">))))</span>
+       <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="nc">NIL</span><span class="p">)))))))</span>
+</code></pre></div></div>
+
+<p>An important property of this function is that the input matrix must be transposed before
+calculating the correct result.
+Usually, <code class="language-html highlighter-rouge">V @ A</code> where <code class="language-html highlighter-rouge">@</code> is matrix multiplication is defined by
+multiplying the rows of <code class="language-html highlighter-rouge">V</code> with the columns of <code class="language-html highlighter-rouge">A</code>.
+Taking the columns of <code class="language-html highlighter-rouge">A</code> is expensive in our Lisp implementation since we have to manage all of the
+vector elements in <code class="language-html highlighter-rouge">A</code> at once in one iteration.
+On the other hand, if we transpose <code class="language-html highlighter-rouge">A</code> before the multiplication,
+all of the elements in each column become aligned in a single row which can be extracted at once as a single vector element.
+Since we already have vector-vector multiplication, i.e., vector dot products defined,
+this way of transposing <code class="language-html highlighter-rouge">A</code> beforehand blends in nicely with our function.
+The name <code class="language-html highlighter-rouge">vecmatmulVAT</code> emphasizes this fact by writing <code class="language-html highlighter-rouge">AT</code> which means <code class="language-html highlighter-rouge">A</code> transposed.</p>
+
+<h3 id="matrix-matrix-multiplication">Matrix-Matrix Multiplication</h3>
+<p>Using vector-matrix multiplication, matrix-matrix multiplication can be implemented right away,
+by iterating over the matrix at the first operand:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; matmulABT : mat, mat -&gt; mat : Matrix A times transposed matrix B</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">A</span> <span class="nv">BT</span><span class="p">)</span>
+  <span class="p">((</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">matmulABThelper</span><span class="p">)</span>
+     <span class="p">(</span><span class="nv">matmulABThelper</span> <span class="nv">A</span><span class="p">))</span>
+   <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">A</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">COND</span>
+       <span class="p">(</span><span class="nv">A</span> <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="nv">vecmatmulVAT</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">A</span><span class="p">)</span> <span class="nv">BT</span><span class="p">)</span> <span class="p">(</span><span class="nv">matmulABThelper</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">A</span><span class="p">))))</span>
+       <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="nc">NIL</span><span class="p">)))))))</span>
+</code></pre></div></div>
+
+<p>Similar to <code class="language-html highlighter-rouge">vecmatmulVAT</code>, the second operand matrix <code class="language-html highlighter-rouge">B</code> is transposed as <code class="language-html highlighter-rouge">BT</code> in this function.</p>
+
+<p>Note that we actually do not use matrix-matrix multiplication in our final neural network,
+since the first operand is always a flattened vector,
+and subsequent functions also always yield a vector as well.</p>
+
+<h3 id="vector-argmax">Vector Argmax</h3>
+<p>Taking the argmax of the vector, i.e., finding the index of the largest value in a vector
+can simply be implemented by recursive comparison:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; vecargmax</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span>
+  <span class="p">((</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">vecargmaxhelper</span><span class="p">)</span>
+    <span class="p">(</span><span class="nv">vecargmaxhelper</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">X</span><span class="p">)</span> <span class="p">()</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">*</span><span class="p">))))</span>
+   <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span> <span class="nv">curmax</span> <span class="nv">maxind</span> <span class="nv">curind</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">COND</span>
+       <span class="p">(</span><span class="nv">X</span> <span class="p">(</span><span class="k">COND</span>
+            <span class="p">((</span><span class="nv">&lt;</span> <span class="nv">curmax</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">X</span><span class="p">))</span> <span class="p">(</span><span class="nv">vecargmaxhelper</span>
+                                  <span class="p">(</span><span class="k">CDR</span> <span class="nv">X</span><span class="p">)</span>
+                                  <span class="p">(</span><span class="k">CAR</span> <span class="nv">X</span><span class="p">)</span>
+                                  <span class="nv">curind</span>
+                                  <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">*</span><span class="p">)</span> <span class="nv">curind</span><span class="p">)))</span>
+            <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="p">(</span><span class="nv">vecargmaxhelper</span>
+                                  <span class="p">(</span><span class="k">CDR</span> <span class="nv">X</span><span class="p">)</span>
+                                  <span class="nv">curmax</span>
+                                  <span class="nv">maxind</span>
+                                  <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">*</span><span class="p">)</span> <span class="nv">curind</span><span class="p">)))))</span>
+       <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="nv">maxind</span><span class="p">)))))))</span>
+</code></pre></div></div>
+
+<p>A similar recursive function is <code class="language-html highlighter-rouge">img2vec</code>, where the <code class="language-html highlighter-rouge">*</code>-<code class="language-html highlighter-rouge">.</code> notation for the input image
+is transformed to ones and zeros:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; img2vec</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">img</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">COND</span>
+    <span class="p">(</span><span class="nv">img</span> <span class="p">(</span><span class="k">CONS</span> <span class="p">(</span><span class="k">COND</span>
+                 <span class="p">((</span><span class="k">EQ</span> <span class="p">(</span><span class="k">CAR</span> <span class="nv">img</span><span class="p">)</span> <span class="p">(</span><span class="k">QUOTE</span> <span class="nv">*</span><span class="p">))</span> <span class="nv">1</span><span class="p">)</span>
+                 <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="nv">u0</span><span class="p">))</span>
+               <span class="p">(</span><span class="nv">img2vec</span> <span class="p">(</span><span class="k">CDR</span> <span class="nv">img</span><span class="p">))))</span>
+    <span class="p">((</span><span class="k">QUOTE</span> <span class="nc">T</span><span class="p">)</span> <span class="nc">NIL</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<p>Here, the variable <code class="language-html highlighter-rouge">1</code> is bound to the fixed-point number one in the source code.</p>
+
+<h3 id="the-neural-network">The Neural Network</h3>
+<p><a href="/blog/assets/posts/2022-01-16/nn-diagram.svg"><img src="/blog/assets/posts/2022-01-16/nn-diagram.svg" alt="A diagram of our neural network." /></a></p>
+
+<p>We are finally ready to define our neural network!
+Following <a href="#the-model">the model</a>, our network can be defined as a chain of functions as follows:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span>
+  <span class="c1">;; nn</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">input</span><span class="p">)</span>
+   <span class="p">((</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">F1</span> <span class="nv">F2</span> <span class="nv">F3</span> <span class="nv">F4</span> <span class="nv">F5</span> <span class="nv">F6</span> <span class="nv">F7</span> <span class="nv">F8</span><span class="p">)</span>
+      <span class="p">(</span><span class="nv">F8</span> <span class="p">(</span><span class="nv">F7</span> <span class="p">(</span><span class="nv">F6</span> <span class="p">(</span><span class="nv">F5</span> <span class="p">(</span><span class="nv">F4</span> <span class="p">(</span><span class="nv">F3</span> <span class="p">(</span><span class="nv">F2</span> <span class="p">(</span><span class="nv">F1</span> <span class="nv">input</span><span class="p">)))))))))</span>
+    <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="nv">img2vec</span> <span class="nv">X</span><span class="p">)))</span>
+    <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="nv">vecmatmulVAT</span> <span class="nv">X</span> <span class="nv">A_1_T</span><span class="p">)))</span>
+    <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="nv">vecadd</span> <span class="nv">X</span> <span class="nv">B_1</span><span class="p">)))</span>
+    <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="nv">ReLUvec</span> <span class="nv">X</span><span class="p">)))</span>
+    <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="nv">vecmatmulVAT</span> <span class="nv">X</span> <span class="nv">A_2_T</span><span class="p">)))</span>
+    <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="nv">vecadd</span> <span class="nv">X</span> <span class="nv">B_2</span><span class="p">)))</span>
+    <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="nv">vecargmax</span> <span class="nv">X</span><span class="p">)))</span>
+    <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="k">LAMBDA</span> <span class="p">(</span><span class="nv">X</span><span class="p">)</span> <span class="p">(</span><span class="nb">nth</span> <span class="nv">X</span> <span class="nv">digitlist</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<p>This represents a chain of functions
+from the <code class="language-html highlighter-rouge">input</code> to the <code class="language-html highlighter-rouge">nth</code> argument of <code class="language-html highlighter-rouge">digitlist</code>, which is a list of atoms
+of the digits, <code class="language-html highlighter-rouge">(QUOTE (0 1 2 3 4 5 6 7 8 9))</code>.</p>
+
+<p>Here, <code class="language-html highlighter-rouge">A_1_T</code>, <code class="language-html highlighter-rouge">B_1</code>, <code class="language-html highlighter-rouge">A_2_T</code>, and <code class="language-html highlighter-rouge">B_2</code> are the model parameters obtained from the <a href="#training-the-neural-network">training</a>
+section, converted to our fixed-point number system.</p>
+
+<h2 id="results">Results</h2>
+<p>Now let’s try actually running our Lisp neural network!
+We will use the i8086 emulator <a href="https://justine.lol/blinkenlights/">Blinkenlights</a>.
+Instructions for running the program in this emulator is described in the
+<a href="#running-the-neural-network-on-your-computer">running the neural network on your computer</a> section.</p>
+
+<p>Let’s first try giving the network the following image of the digit 5:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span>
+        <span class="nv">*</span> <span class="nv">.</span> <span class="nv">.</span>
+        <span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span>
+        <span class="nv">.</span> <span class="nv">.</span> <span class="nv">*</span>
+        <span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>It turns out like this:</p>
+
+<p><a href="/blog/assets/posts/2022-01-16/ss-nn.png"><img src="/blog/assets/posts/2022-01-16/ss-nn.png" alt="The pure Lisp neural network in action." /></a></p>
+
+<p>The network correctly predicts the digit shown in the image!</p>
+
+<p>Although the original network was trained in an environment where 64-bit floating-point numbers were available,
+our system of 18-bit fixed-point numbers was also capable of running this network with the same parameters truncated to fit in 18 bits.</p>
+
+<h3 id="new-unseen-input-with-noise">New Unseen Input with Noise</h3>
+<p>Now let’s try giving another digit:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">*</span> <span class="nv">*</span> <span class="nv">.</span>
+        <span class="nv">.</span> <span class="nv">.</span> <span class="nv">*</span>
+        <span class="nv">.</span> <span class="nv">*</span> <span class="nv">*</span>
+        <span class="nv">*</span> <span class="nv">.</span> <span class="nv">.</span>
+        <span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Notice that this image is not apparent in the training set, or even in the test dataset.
+Therefore, the network has never seen this image before, and it is the very first time that it sees this image.</p>
+
+<p>Can the network correctly predict the digit shown in this image? The results were as follows:</p>
+
+<p><a href="/blog/assets/posts/2022-01-16/ss-nn-2.png"><img src="/blog/assets/posts/2022-01-16/ss-nn-2.png" alt="The pure Lisp neural network in action." /></a></p>
+
+<p>The network predicted the digit correctly!</p>
+
+<p>Even for images that were never seen before,
+the neural network was able to learn how to interpret images of digits only by giving some examples of digit images.
+This is the magic of neural networks!</p>
+
+<p>Therefore, in a way, we have taught a Lisp interpreter that runs on the IBM PC model 5150 what digits are,
+only by providing example pictures of digits in the process.
+Of course, the accumulation of knowledge through training the network was done on a modern computer,
+but that knowledge was handed on to a 512-byte program that is capable of running on vintage hardware.</p>
+
+<h2 id="closing-remarks">Closing Remarks</h2>
+<p>It was very fun building a neural network from the bottom up using only first principles of symbolic manipulation.
+This is what it means for a programming language to be Turing-complete - it can basically do anything that any other modern computers are capable of.</p>
+
+<p>As mentioned at the beginning of this post, Lisp was used as a language for creating advanced artificial intelligence
+after its birth in 1958.
+60 years later in 2018, Yoshua Bengio, Geoffrey Hinton, and Yann LeCun received the <a href="https://awards.acm.org/about/2018-turing">Turing Award</a>
+for establishing the foundations of modern Deep Learning.
+In a way, using a Turing-complete Lisp interpreter to implement neural networks revisits this history of computer science.</p>
+
+<h2 id="credits">Credits</h2>
+<p>The neural network for SectorLISP and its fixed-point number system discussed in this blog post were implemented by Hikaru Ikuta.
+The SectorLISP project was first started by Justine Tunney
+and was created by the authors who have contributed to <a href="https://github.com/jart/sectorlisp">the project</a>,
+and the authors credited in the original <a href="https://justine.lol/sectorlisp2/">SectorLISP blog post</a>.
+The i8086 emulator <a href="https://justine.lol/blinkenlights/">Blinkenlights</a> was created by Justine Tunney.
+The neural network diagram was created using <a href="https://www.diagrams.net/">diagrams.net</a>.
+The training and testing dataset, as well as the fully connected neural network model, were inspired by
+a <a href="https://aidiary.hatenablog.com/entry/20050505/1274165051">blog post</a> (in Japanese)
+written by Koichiro Mori (<a href="https://profile.hatena.ne.jp/aidiary/">aidiary</a>) from DeNA.
+The TensorFlow implementation of the model was referenced from the <a href="https://www.tensorflow.org/tutorials/quickstart/beginner">TensorFlow 2 quickstart for beginners</a>
+entry from the TensorFlow documentation.</p>]]></content><author><name></name></author><category term="Machine_Learning" /><category term="Neural_Networks" /><category term="Lisp" /><category term="x86" /><category term="SectorLISP" /><summary type="html"><![CDATA[A neural network written in pure Lisp without built-in numbers using only atoms and lists in SectorLISP, a 512-byte Lisp interpreter written by the authors of the SectorLISP project.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://woodrush.github.io/blog/assets/posts/2022-01-16/nn-diagram.png" /><media:content medium="image" url="https://woodrush.github.io/blog/assets/posts/2022-01-16/nn-diagram.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">A Lisp Interpreter Implemented in Conway’s Game of Life</title><link href="https://woodrush.github.io/blog/posts/2022-01-12-lisp-in-life.html" rel="alternate" type="text/html" title="A Lisp Interpreter Implemented in Conway’s Game of Life" /><published>2022-01-12T18:01:35+09:00</published><updated>2022-01-12T18:01:35+09:00</updated><id>https://woodrush.github.io/blog/posts/lisp-in-life</id><content type="html" xml:base="https://woodrush.github.io/blog/posts/2022-01-12-lisp-in-life.html"><![CDATA[<p><a href="/blog/assets/posts/2022-01-12-lisp-in-life/ss2.png"><img src="/blog/assets/posts/2022-01-12-lisp-in-life/ss2.png" alt="A screenshot of the Lisp in Life architecture." /></a></p>
 
 <p>Lisp in Life is a Lisp interpreter implemented in Conway’s Game of Life.</p>
 
