@@ -65,9 +65,6 @@
 
 <p>To the best of my knowledge, this is the first time a high-level programming language was interpreted in Conway’s Game of Life.</p>
 
-<p>Source codes and pattern files are available at the GitHub repository
-<a href="https://github.com/woodrush/lisp-in-life">https://github.com/woodrush/lisp-in-life</a>.</p>
-
 <h2 id="running-lisp-on-the-game-of-life">Running Lisp on the Game of Life</h2>
 <p>Lisp is a language with a simple and elegant design, having an extensive ability to express sophisticated ideas as simple programs. Notably, the powerful feature of <em>macros</em> could be used to modify the language’s syntax to write programs in a highly flexible way. For example, macros can be used to introduce new programming paradigms to the language, as demonstrated in <a href="https://github.com/woodrush/lisp-in-life/blob/main/lisp/object-oriented-like.lisp">object-oriented-like.lisp</a> (which can actually be evaluated by the interpreter, although complex programs take quite a long time to finish running), where a structure and syntax similar to classes in Object Oriented Programming is constructed. Despite the expressibility of Lisp, it is <a href="https://en.wikipedia.org/wiki/Lisp_(programming_language)">the world’s second oldest high-level programming language</a> introduced in 1958, only to be preceded by Fortran.</p>
 
@@ -101,6 +98,11 @@ The Lisp source code is then written into the computer’s RAM module as its raw
 The Conway’s Game of Life pattern directly reads, parses, and evaluates this Lisp source code to produce its output.
 This feature of allowing a Conway’s Game of Life pattern to evaluate a high-level programming language expressed as a string of text
 is a novel feature that was newly achieved in this project.</p>
+
+<h2 id="video">Video</h2>
+<p>Here is a YouTube video showing Lisp in Life in action:</p>
+
+<p><a href="https://www.youtube.com/watch?v=foAJTAu_gyE" target="_blank"><img src="/blog/assets/posts/2022-01-12-lisp-in-life/youtube-ss.png" alt="YouTube video of Lisp in Life." /></a></p>
 
 <h2 id="screenshots">Screenshots</h2>
 <p><img src="/blog/assets/posts/2022-01-12-lisp-in-life/ss1.png" alt="An overview of the entire architecture." /></p>
