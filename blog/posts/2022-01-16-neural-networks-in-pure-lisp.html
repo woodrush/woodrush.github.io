@@ -118,7 +118,8 @@ and will automatically type the Lisp program into the emulator’s console.</p>
 <p>Due to the way the test script handles the text stream between the host PC and QEMU,
 it first takes 10 minutes to type the entire Lisp source code to the emulator’s console.
 After waiting for 10 minutes, the actual inference time only takes about 4 seconds,
-where the program will show a message on the screen indicating the predicted digit.</p>
+where the program will show a message on the screen indicating the predicted digit.
+The running time was measured using a 2.8 GHz Intel i7 CPU.</p>
 
 <p>To input a custom 3x5 digit image,
 edit <a href="https://github.com/woodrush/sectorlisp-nn/blob/main/nn.lisp#L307-L314">the following expression</a>
@@ -186,7 +187,7 @@ to run your Lisp program.</p>
 
 <p>To run the neural network program, copy the contents of <a href="https://github.com/woodrush/sectorlisp-nn/blob/main/nn.lisp">nn.lisp</a>
 from the repository to your clipboard, and paste it inside the terminal into Blinkenlight’s console.
-After waiting for a few minutes, the result will be shown on the console.
+After waiting for about 2 minutes, the result will be shown on the console.
 Note that it is important to copy the newline at the end of the program,
 which will trigger the turbo mode on Blinkenlights which makes it run significantly faster.
 In this case, the screen will initially show nothing after you paste the
@@ -195,7 +196,8 @@ If the code shows up right away after pasting with the cursor right next to the 
 of the code, you may have not included the newline,
 which takes significantly more time since it does not run in turbo mode.</p>
 
-<p>On Blinkenlights, it took 2 minutes from pasting the code to obtaining the final inference results.</p>
+<p>On Blinkenlights, it took 2 minutes from pasting the code to obtaining the final inference results.
+The running time was measured using a 2.8 GHz Intel i7 CPU.</p>
 
 <p>To input a custom 3x5 digit image,
 edit <a href="https://github.com/woodrush/sectorlisp-nn/blob/main/nn.lisp#L307-L314">the following expression</a> at the end of the program:</p>
@@ -1020,11 +1022,14 @@ The training was run on a 15-image dataset for 1000 epochs.</p>
   </tbody>
 </table>
 
+<p>The emulation was done on a 2.8 GHz Intel i7 CPU.
+When run on a 4.77 MHz IBM PC, I believe it should run 590 times slower than in QEMU,
+which is roughly 40 minutes.</p>
+
 <p>The memory usage including the SectorLISP boot sector program, the S-expression stack
 for the entire Lisp program, and the RAM used for computing the neural network
 fits in 64 kiB of memory.
-This means that this program is capable of running on the original IBM 5150 PC,
-although it would take longer if run on the CPUs of that time.</p>
+This means that this program is capable of running on the original IBM 5150 PC.</p>
 
 <h2 id="closing-remarks">Closing Remarks</h2>
 <p>It was very fun building a neural network from the bottom up using only first principles of symbolic manipulation.
