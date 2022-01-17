@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-01-17T13:45:13+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">Building a Neural Network in Pure Lisp Without Built-In Numbers Using Only Atoms and Lists</title><link href="https://woodrush.github.io/blog/posts/2022-01-16-neural-networks-in-pure-lisp.html" rel="alternate" type="text/html" title="Building a Neural Network in Pure Lisp Without Built-In Numbers Using Only Atoms and Lists" /><published>2022-01-16T19:00:35+09:00</published><updated>2022-01-16T19:00:35+09:00</updated><id>https://woodrush.github.io/blog/posts/neural-networks-in-pure-lisp</id><content type="html" xml:base="https://woodrush.github.io/blog/posts/2022-01-16-neural-networks-in-pure-lisp.html"><![CDATA[<p><a href="/blog/assets/posts/2022-01-16/nn-diagram-bg.svg"><img src="/blog/assets/posts/2022-01-16/nn-diagram.svg" alt="A diagram of our neural network." /></a></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-01-17T14:10:40+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">Building a Neural Network in Pure Lisp Without Built-In Numbers Using Only Atoms and Lists</title><link href="https://woodrush.github.io/blog/posts/2022-01-16-neural-networks-in-pure-lisp.html" rel="alternate" type="text/html" title="Building a Neural Network in Pure Lisp Without Built-In Numbers Using Only Atoms and Lists" /><published>2022-01-16T19:00:35+09:00</published><updated>2022-01-16T19:00:35+09:00</updated><id>https://woodrush.github.io/blog/posts/neural-networks-in-pure-lisp</id><content type="html" xml:base="https://woodrush.github.io/blog/posts/2022-01-16-neural-networks-in-pure-lisp.html"><![CDATA[<p><a href="/blog/assets/posts/2022-01-16/nn-diagram-bg.svg"><img src="/blog/assets/posts/2022-01-16/nn-diagram.svg" alt="A diagram of our neural network." /></a></p>
 
 <p>At the dawn of Lisp after its birth in 1958, Lisp was used as a language for creating advanced artificial intelligence.
 This project makes that a reality once again by implementing a neural network for pattern recognition
@@ -944,19 +944,28 @@ The training was run on a 15-image dataset for 1000 epochs.</p>
     <tr>
       <th>Emulator</th>
       <th>Inference Time</th>
+      <th>Runtime Memory Usage</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>QEMU</td>
       <td>4 seconds</td>
+      <td>64 kiB</td>
     </tr>
     <tr>
       <td>Blinkenlights</td>
       <td>2 minutes</td>
+      <td>64 kiB</td>
     </tr>
   </tbody>
 </table>
+
+<p>The memory usage including the SectorLISP boot sector program, the S-expression stack
+for the entire Lisp program, and the RAM used for computing the neural network
+fits in 64 kiB of memory.
+This means that this program is capable of running on the original IBM 5150 PC,
+although it would take longer if run on the CPUs of that time.</p>
 
 <h2 id="closing-remarks">Closing Remarks</h2>
 <p>It was very fun building a neural network from the bottom up using only first principles of symbolic manipulation.

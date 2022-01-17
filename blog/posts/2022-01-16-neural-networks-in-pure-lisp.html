@@ -1003,19 +1003,28 @@ The training was run on a 15-image dataset for 1000 epochs.</p>
     <tr>
       <th>Emulator</th>
       <th>Inference Time</th>
+      <th>Runtime Memory Usage</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>QEMU</td>
       <td>4 seconds</td>
+      <td>64 kiB</td>
     </tr>
     <tr>
       <td>Blinkenlights</td>
       <td>2 minutes</td>
+      <td>64 kiB</td>
     </tr>
   </tbody>
 </table>
+
+<p>The memory usage including the SectorLISP boot sector program, the S-expression stack
+for the entire Lisp program, and the RAM used for computing the neural network
+fits in 64 kiB of memory.
+This means that this program is capable of running on the original IBM 5150 PC,
+although it would take longer if run on the CPUs of that time.</p>
 
 <h2 id="closing-remarks">Closing Remarks</h2>
 <p>It was very fun building a neural network from the bottom up using only first principles of symbolic manipulation.
