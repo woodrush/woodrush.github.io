@@ -215,7 +215,9 @@ edit <a href="https://github.com/woodrush/sectorlisp-nn/blob/main/nn.lisp#L307-L
 <h3 id="running-on-physical-hardware">Running on Physical Hardware</h3>
 <p>You can also run SectorLISP on an actual physical machine if you have a PC with an Intel CPU that boots with a BIOS,
 and a drive such as a USB drive or a floppy disk that can be used as a boot drive.
-First, mount your drive to the PC you’ve built sectorlisp.bin on, and check:</p>
+Note that when running the neural network program this way, you must type the entire program by hand into the console.</p>
+
+<p>First, mount your drive to the PC you’ve built sectorlisp.bin on, and check:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>lsblk <span class="nt">-o</span> KNAME,TYPE,SIZE,MODEL
 </code></pre></div></div>
