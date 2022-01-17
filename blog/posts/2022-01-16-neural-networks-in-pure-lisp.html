@@ -96,8 +96,47 @@ to calculate predictions for custom digit images in detail.
 The instructions for training and evaluating the neural network
 to obtain the model parameters used for this network is available at the repository.</p>
 
-<h3 id="running-the-sectorlisp-program">Running the SectorLISP Program</h3>
-<p>Here are the instructions for running the neural network implemented in SectorLISP.</p>
+<p>The available emulators are QEMU and the i8086 emulator <a href="https://justine.lol/blinkenlights/">Blinkenlights</a>.
+I will also describe how to run SectorLISP on physical hardware, except for this method
+you must type the entire Lisp program by hand into the computer. In the emulators,
+you can either automatically load the code or paste it into the console.</p>
+
+<h3 id="running-on-qemu">Running on QEMU</h3>
+<p>If you have QEMU installed, running the Lisp neural network on QEMU can be done by
+running the following <code class="language-html highlighter-rouge">make</code> prodedure:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code>git clone https://github.com/woodrush/sectorlisp
+git checkout nn
+git submodule update <span class="nt">--init</span> <span class="nt">--recursive</span>
+<span class="nb">cd test
+</span>make nn
+</code></pre></div></div>
+
+<p>This will start QEMU with SectorLISP loaded as the boot sector program,
+and will automatically type the Lisp program into the emulator’s console.</p>
+
+<p>Due to the way the test script handles the text stream between the host PC and QEMU,
+it first takes 10 minutes to type the entire Lisp source code to the emulator’s console.
+After waiting for 10 minutes, the actual inference time only takes about 4 seconds,
+where the program will show a message on the screen indicating the predicted digit.</p>
+
+<p>To input a custom 3x5 digit image,
+edit <a href="https://github.com/woodrush/sectorlisp-nn/blob/main/nn.lisp#L307-L314">the following expression</a>
+at the end of the program, <code class="language-html highlighter-rouge">./sectorlisp-nn/nn.lisp</code>, inside the <code class="language-html highlighter-rouge">sectorlisp-nn</code> submodule:</p>
+
+<div class="language-sectorlisp highlighter-rouge"><div class="highlight"><pre class="syntax"><code> <span class="p">(</span><span class="k">QUOTE</span>
+   <span class="c1">;; input</span>
+ <span class="p">)</span>
+ <span class="p">(</span><span class="k">QUOTE</span> <span class="p">(</span><span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span>
+         <span class="nv">*</span> <span class="nv">.</span> <span class="nv">.</span>
+         <span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span>
+         <span class="nv">.</span> <span class="nv">.</span> <span class="nv">*</span>
+         <span class="nv">*</span> <span class="nv">*</span> <span class="nv">*</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h3 id="running-on-blinkenlights">Running on Blinkenlights</h3>
+<p>Here are the instructions on running the network on
+the i8086 emulator <a href="https://justine.lol/blinkenlights/">Blinkenlights</a>.</p>
 
 <p>First, <code class="language-html highlighter-rouge">git clone</code> the SectorLISP repository and <code class="language-html highlighter-rouge">make</code> SectorLISP’s binary, <code class="language-html highlighter-rouge">sectorlisp.bin</code>:</p>
 
@@ -114,7 +153,7 @@ In this case, <code class="language-html highlighter-rouge">git checkout</code> 
 Since the source code for this project is backwards comptible with the main SectorLISP branch,
 the same code can be run on both versions.</p>
 
-<p>To run SectorLISP on the i8086 emulator <a href="https://justine.lol/blinkenlights/">Blinkenlights</a>,
+<p>To run SectorLISP on <a href="https://justine.lol/blinkenlights/">Blinkenlights</a>,
 first follow the instructions on its <a href="https://justine.lol/blinkenlights/download.html">download page</a>
 and get the latest version:</p>
 
@@ -147,7 +186,16 @@ to run your Lisp program.</p>
 
 <p>To run the neural network program, copy the contents of <a href="https://github.com/woodrush/sectorlisp-nn/blob/main/nn.lisp">nn.lisp</a>
 from the repository to your clipboard, and paste it inside the terminal into Blinkenlight’s console.
-After waiting for a few minutes, the result will be shown on the console.</p>
+After waiting for a few minutes, the result will be shown on the console.
+Note that it is important to copy the newline at the end of the program,
+which will trigger the turbo mode on Blinkenlights which makes it run significantly faster.
+In this case, the screen will initially show nothing after you paste the
+code, but you can confirm that it is running by checking the CPU usage of your computer.
+If the code shows up right away after pasting with the cursor right next to the final parentheses
+of the code, you may have not included the newline,
+which takes significantly more time since it does not run in turbo mode.</p>
+
+<p>On Blinkenlights, it took 2 minutes from pasting the code to obtaining the final inference results.</p>
 
 <p>To input a custom 3x5 digit image,
 edit <a href="https://github.com/woodrush/sectorlisp-nn/blob/main/nn.lisp#L307-L314">the following expression</a> at the end of the program:</p>
