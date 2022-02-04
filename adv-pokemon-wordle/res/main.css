@@ -1,0 +1,312 @@
+body {
+    font: 400 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background-color: #fdfdfd;
+}
+.bs {
+    font-size: 1.4em;
+}
+
+.row {
+    margin-bottom: 3px;
+}
+
+.bs-key {
+    height: 50px;
+    width: 5em;
+    /* padding-top: 5px; */
+    padding-bottom: 5px;
+}
+
+.enter-key {
+    height: 50px;
+    width: 5em;
+}
+
+.toggle-key {
+    height: 50px;
+    width: 8em;
+}
+
+.settings-key {
+    height: 50px;
+    width: 3.3em;
+    /* padding-bottom: 4px; */
+}
+
+.help-key {
+    height: 50px;
+    width: 2.5em;
+}
+
+.key-hover:hover {
+    background-color: #ffffff;
+}
+
+.key {
+    height: 50px;
+    width: 8%;
+    border-radius: 5px;
+    border-color:rgb(216, 216, 216);
+    /* box-shadow: 0px 0px; */
+    border-style: solid;
+}
+
+.key:hover {
+    background-color: #ffffff;
+}
+
+
+.key-G {
+    background-color: #4cd447;
+    /* border-color: #ffffff;
+    border-style: solid; */
+}
+
+.key-Y {
+    background-color: #ccc929;
+    /* border-color: #ffffff;
+    border-style: solid;
+    border-width: 2px; */
+}
+
+.key-B {
+    background-color: #6d6d6d;
+    /* border-color: #ffffff;
+    border-style: solid; */
+}
+
+/* .key-spacer {
+    height: 50px;
+    margin-left: 1.9em;
+} */
+
+.clear-message {
+    font-size: 1.2em;
+    vertical-align: center;
+    margin-bottom: 0.2em;
+}
+
+.fail-message {
+    font-size: 1.2em;
+    vertical-align: center;
+}
+
+.fail-message-2 {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.title {
+    font-size: 1.2em;
+    vertical-align: center;
+    margin-right: 2.3em;
+    margin-bottom: 0.2em;
+}
+
+.title-container {
+    max-width: 22em;
+    margin: 1em auto;
+    text-align: center;
+    flex: 0 0 20px; display: flex; justify-content: end; gap: 2px;
+}
+
+.title-body {
+    max-width: 22em;
+    margin: 1em auto;
+    /* margin: 1em auto; */
+    /* text-align: center; */
+}
+
+.keyboard-container {
+    margin: 1em auto;
+    text-align: center;
+    margin-top: 1.5em;
+    max-width: 28em;
+}
+
+.board-container {
+    margin: 1em auto;
+    text-align: center;
+    max-width: 30em;
+}
+
+.result-container {
+    margin: 1em auto;
+    text-align: center;
+    max-width: 30em;
+    border-color: #4cd447;
+    border-width: 2px;
+    border-style: solid;
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
+}
+
+.ultrahard-container {
+    margin: 1em auto;
+    text-align: center;
+    max-width: 30em;
+}
+
+.ultrahard-fail-container {
+    margin: 1em auto;
+    text-align: center;
+    max-width: 30em;
+}
+
+.rule-ul {
+    padding-left: 1.2em;
+}
+.help-container {
+    max-width: 45em;
+    margin: 1em auto;
+    text-align: center;
+}
+
+.help-body {
+    max-width: 45em;
+    margin: 1em auto;
+    border-style: solid;
+    border-color:rgb(216, 216, 216);
+    border-width: 2px;
+    border-radius: 6px;
+    padding: 1em;
+}
+
+.settings-container {
+    max-width: 45em;
+    margin: 1em auto;
+    text-align: center;
+}
+
+.settings-body {
+    max-width: 45em;
+    margin: 1em auto;
+    border-style: solid;
+    border-color:rgb(216, 216, 216);
+    border-width: 2px;
+    border-radius: 6px;
+    padding: 1em;
+}
+
+.board {
+    text-align: center;
+}
+
+.box-base {
+    width: 3.2em;
+    height: 3.4em;
+    border-width: 2px;
+}
+.box-empty {
+    background-color: #dcdcdc;
+    /* border-color: #dcdcdc; */
+    border-color: #ffffff;
+    border-style: solid;
+}
+
+.box-G {
+    background-color: #4cd447;
+    /* border-color: #31dd2b; */
+    border-color: #ffffff;
+    border-style: solid;
+}
+
+.box-Y {
+    background-color: #ccc929;
+    /* border-color: #ff6021; */
+    /* border-style: dashed; */
+    /* border-color: #ccc929; */
+    border-color: #ffffff;
+    border-style: solid;
+    /* border-width: 2px; */
+}
+
+.box-B {
+    background-color: #6d6d6d;
+    /* border-color: #8f8d8d; */
+    border-color: #ffffff;
+    border-style: solid;
+}
+
+.box-text-input {
+    color: rgb(0, 0, 0);
+    font-size: 1.3em;
+}
+
+.box-text-output {
+    color: rgb(255, 255, 255);
+    font-size: 1.3em;
+}
+
+.settings-button-row {
+    display: flex;
+    gap: 5px;
+    justify-content: end;
+}
+
+.enter-button-row {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.input-text {
+    margin-bottom: 10px;
+    height: 30px;
+    width: 20em;
+    text-align: center;
+}
+
+.result-message {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.twitter-share-button {
+    background-color: rgb(29, 155, 240);
+    color: #ffffff;
+    font-size: 1em;
+    border-color: #ffffff;
+    box-shadow: none;
+    text-shadow: none;
+    border-radius: 8px;
+    border-style: solid;
+    padding: 8px 12px 8px 12px;
+}
+
+.twitter-share-button:hover {
+    background-color: rgb(85, 177, 238)
+}
+
+.start-game-button {
+    font-size: 1em;
+    border-radius: 8px;
+    border-style: solid;
+    padding: 8px 12px 8px 12px;
+    border-color:rgb(216, 216, 216);
+}
+
+.start-game-button:hover {
+    background-color: #ffffff;
+}
+
+.basic-button {
+    font-size: 1em;
+    border-radius: 8px;
+    border-style: solid;
+    padding: 4px 7px 4px 7px;
+    border-color:rgb(216, 216, 216);
+}
+
+.basic-button:hover {
+    background-color: #ffffff;
+}
+
+.settings-td {
+    vertical-align: top;
+}
