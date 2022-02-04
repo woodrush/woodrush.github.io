@@ -69,15 +69,14 @@ function if_enter(str) {
 
         update_keyboard_color(feedback_keystate);
 
-        if (modedict["ultrahard"] && !current_pokedex.includes(ultrahard_goal)) {
-            game_finished = true;
-            document.getElementById("ultrahard-fail-container").style.display = "block";
-            return true;
-        }
 
         if (feedback == FEEDBACK_CLEARED) {
             game_finished = true;
             show_results();
+        } else if (currow == 5) {
+            game_finished = true;
+            document.getElementById("ultrahard-fail-container").style.display = "block";
+            return true;
         } else {
             add_box_row();
         }
@@ -129,18 +128,18 @@ function update_box_row_color(feedback) {
 }
 
 function add_box_row() {
-    let board = document.getElementById("board");
-    let tr = document.createElement("tr");
+    // let board = document.getElementById("board");
+    // let tr = document.createElement("tr");
     currow += 1;
     curcol = 0;
     str = "";
-    for(let i=0; i<5; i++){
-        let td = document.createElement("td");
-        td.setAttribute("id", "box-" + currow + "-" + i);
-        td.setAttribute("class", "box-base box-empty");
-        tr.appendChild(td);
-    }
-    board.appendChild(tr);
+    // for(let i=0; i<5; i++){
+    //     let td = document.createElement("td");
+    //     td.setAttribute("id", "box-" + currow + "-" + i);
+    //     td.setAttribute("class", "box-base box-empty");
+    //     tr.appendChild(td);
+    // }
+    // board.appendChild(tr);
 }
 
 function update_keyboard_color(feedback_keystate) {
@@ -336,15 +335,7 @@ function textbox_onkey(e) {
 }
 
 function tweet_result(result) {
-    let ret_text = "サーナイtle";
-    if (modedict["ultrahard"]) {
-        ret_text = ret_text + "のウルトラハードモード";
-    }
-    if (result == "cleared") {
-        ret_text = ret_text + "を" + (currow + 1) + "手でクリアしました。%0A"
-    } else {
-        ret_text = ret_text + "をクリアできませんでした…%0A"
-    }
+    let ret_text = "サーナイtle " + (currow + 1) + "/6%0A";
     const feedback2emoji = {
         "G": "🟩",
         "Y": "🟨",

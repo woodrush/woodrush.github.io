@@ -11,19 +11,19 @@ body {
 }
 
 .bs-key {
-    height: 50px;
+    height: 40px;
     width: 5em;
     /* padding-top: 5px; */
     padding-bottom: 5px;
 }
 
 .enter-key {
-    height: 50px;
+    height: 40px;
     width: 5em;
 }
 
 .toggle-key {
-    height: 50px;
+    height: 40px;
     width: 9em;
 }
 
@@ -43,7 +43,7 @@ body {
 }
 
 .key {
-    height: 50px;
+    height: 40px;
     width: 8%;
     border-radius: 5px;
     border-color:rgb(216, 216, 216);
@@ -203,8 +203,8 @@ body {
 }
 
 .box-base {
-    width: 3.2em;
-    height: 3.4em;
+    width: 2.7em;
+    height: 2.9em;
     border-width: 2px;
 }
 .box-empty {
