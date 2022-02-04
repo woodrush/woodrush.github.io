@@ -24,7 +24,7 @@ body {
 
 .toggle-key {
     height: 50px;
-    width: 8em;
+    width: 9em;
 }
 
 .settings-key {
@@ -49,6 +49,9 @@ body {
     border-color:rgb(216, 216, 216);
     /* box-shadow: 0px 0px; */
     border-style: solid;
+    color: #0f0f0f;
+    text-align: center;
+    padding: auto;
 }
 
 .key:hover {
