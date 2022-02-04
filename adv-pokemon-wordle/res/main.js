@@ -255,6 +255,34 @@ function init() {
     if (!cookie_check_nomessage()) {
         window.setTimeout(clickHelp, 800);
     }
+
+    document.getElementById("settings-key").addEventListener("click", clickSettings);
+    document.getElementById("help-key").addEventListener("click", clickHelp);
+    document.getElementById("twitter-share-failed").addEventListener("click", function () {
+        tweet_result("failed");
+    });
+    document.getElementById("twitter-share-cleared").addEventListener("click", function () {
+        tweet_result("cleared");
+    });
+    document.getElementById("start-game-button").addEventListener("click", clickHelp);
+    document.getElementById("twitter-share-button").addEventListener("click", share_twitter);
+    document.getElementById("set-nomessage-cookie-button").addEventListener("click", set_nomessage_cookie);
+
+    document.getElementById("settings-link-1").addEventListener("click", clickSettings);
+    document.getElementById("help-to-settings-1").addEventListener("click", clickSettings);
+
+    document.getElementById("check-hard").addEventListener("click", function () {
+        click_mode("hard");
+    });
+    document.getElementById("check-ultrahard").addEventListener("click", function () {
+        click_mode("ultrahard");
+    });
+
+    document.getElementById("set-nomessage-cookie-button-2").addEventListener("click", set_nomessage_cookie);
+    document.getElementById("delete-cookie-button").addEventListener("click", delete_cookie);
+
+    document.getElementById("settings-to-game-button").addEventListener("click", clickSettings);
+    document.getElementById("toggle-key").addEventListener("click", toggleKeyboard);
 }
 
 function clickHelp() {

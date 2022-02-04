@@ -26,17 +26,10 @@
       <table>
         <tr>
           <td><div class="title"><span><b><span style="color:#EA5639">後出し</span>ポケモンWordle</b></span></div></td>
-          <td><button class="settings-key" onClick="clickSettings()"><b>設定</b></button></td>
-          <td><button class="help-key" onClick="clickHelp()"><b>？</b></button></td>
+          <td><button class="settings-key" id="settings-key"><b>設定</b></button></td>
+          <td><button class="help-key" id="help-key"><b>？</b></button></td>
         </tr>
       </table>
-      <!-- <div class="title-body">
-        <div class="settings-button-row">
-          <span class="title"><b>後出しポケモンWordle</b></span>
-           <button class="settings-key" onClick=""><b>設定</b></button>
-          <button class="help-key" onClick="clickHelp()"><b>？</b></button>
-        </div>
-      </div> -->
     </div>
     <div class="ultrahard-container" id="ultrahard-container" style="display:none;">
       <div class="ultrahard-body">
@@ -66,7 +59,7 @@
           <div class="fail-message-2">
             お題のポケモン<b><span class="ultrahard-goal"></span></b>は正解候補からいなくなってしまいました…
           </div>
-          <button class="twitter-share-button" onClick="tweet_result('failed')">結果をツイートする</button>
+          <button class="twitter-share-button" id="twitter-share-failed">結果をツイートする</button>
         </div>
       </div>
       <div class="result-container" id="result-container" style="display:none;">
@@ -77,7 +70,7 @@
               <b><span id="result-turns"></span></b>手でクリアしました！<br>
               おめでとうございます！
             </div>
-            <button class="twitter-share-button" onClick="tweet_result('cleared')">結果をツイートする</button>
+            <button class="twitter-share-button" id="twitter-share-cleared"">結果をツイートする</button>
           </div>
       </div>
       <div class="keyboard-container">
@@ -203,7 +196,7 @@
           <div class="row">
             <div class="enter-button-row">
               <button key="enter" class="enter-key" onClick="onClickKey(this);"><b>Enter</b></button>
-              <button key="toggle" class="toggle-key" onClick="toggleKeyboard();"><b>通常 ↔ ゛゜小</b></button>
+              <button key="toggle" class="toggle-key" id="toggle-key"><b>通常 ↔ ゛゜小</b></button>
               <button key="bs" class="bs-key" onClick="onClickKey(this);"><b><span class="bs">⌫</span></b></button>
             </div>
           </div>
@@ -239,12 +232,12 @@
         </ul>
         あなたはCPUの戦略を乗り越え、正解に辿り着くことができるでしょうか？<br>
         <br>
-        <button class="start-game-button" onClick="clickHelp()">ゲームをはじめる</button><br>
+        <button class="start-game-button" id="start-game-button">ゲームをはじめる</button><br>
         <br>
         <br>
         <div class="title">ウルトラハードモード</div>
         <hr>
-        <a href="#" onClick="clickSettings()">設定</a>から選べるウルトラハードモードでは以下のルールでプレーします。
+        <a href="#" id="help-to-settings-1">設定</a>から選べるウルトラハードモードでは以下のルールでプレーします。
         <ul class="rule-ul">
           <li>
             最初にお題のポケモンがランダムで提示されます。
@@ -254,15 +247,15 @@
         <br>
         <div class="title">その他</div>
         <hr>
-        <button class="twitter-share-button" onClick="share_twitter()">twitterでシェアする</button><br>
+        <button class="twitter-share-button" id="twitter-share-button">twitterでシェアする</button><br>
         <br>
-        <button class="basic-button" onClick="set_nomessage_cookie()">このメッセージを今後最初に表示しない（Cookie使用）</button><br>
+        <button class="basic-button" id="set-nomessage-cookie-button">このメッセージを今後最初に表示しない（Cookie使用）</button><br>
         <br>
         このゲームは<a href="https://qntm.org/">qntm</a>さん作のWordleのadversarial版<a href="https://qntm.org/files/absurdle/absurdle.html">Absurdle</a>から着想を得ています。
         また、<a href="https://powerlanguage.co.uk/">Josh Wardle</a>さん作の<a href="https://www.powerlanguage.co.uk/wordle/">Wordle</a>および<a href="https://twitter.com/giga_yadoran">やど</a>さん作の<a href="https://wordle.mega-yadoran.jp/">ポケモンWordle</a>が原作となっています。<br>
         <br>
         このページではCookieは「このメッセージを今後最初に表示しない」機能のためにクッキーを使用しています。
-        クッキーは<a href="#" onClick="clickSettings()">設定</a>から削除することができます。<br>
+        クッキーは<a href="#" id="settings-link-1">設定</a>から削除することができます。<br>
         <br>
         作者：<a href="https://twitter.com/woodrush924/">Woodrush</a>
       </div>
@@ -273,13 +266,13 @@
         <div>
           <table>
             <tr>
-              <td class="settings-td"><input type="checkbox" id="check-hard" onClick="click_mode('hard')"></td>
+              <td class="settings-td"><input type="checkbox" id="check-hard"></td>
               <td class="settings-td">
                 ハードモード：これまでに得られたヒントに合致するポケモンのみを回答に使用することができるモードです。
               </td>
             </tr>
             <tr>
-              <td class="settings-td"><input type="checkbox" id="check-ultrahard" onClick="click_mode('ultrahard')"></td>
+              <td class="settings-td"><input type="checkbox" id="check-ultrahard"></td>
               <td class="settings-td">
                 ウルトラハードモード：最初にお題のポケモンがランダムで提示されます。
                 <span style="color:#EA5639"><b>お題のポケモンが正解となるように</b></span>回答を行って下さい。
@@ -291,11 +284,11 @@
         <br>
         その他の設定<br>
         <br>
-        <button class="basic-button" onClick="set_nomessage_cookie()">ロード時に説明メッセージを最初に表示しない（Cookie使用）</button><br>
+        <button class="basic-button" id="set-nomessage-cookie-button-2">ロード時に説明メッセージを最初に表示しない（Cookie使用）</button><br>
         <br>
-        <button class="basic-button" onClick="delete_cookie()">このページのCookieの削除</button><br>
+        <button class="basic-button" id="delete-cookie-button">このページのCookieの削除</button><br>
         <br>
-        <button class="basic-button" onClick="clickSettings()">ゲームに戻る</button>
+        <button class="basic-button" id="settings-to-game-button">ゲームに戻る</button>
       </div>
     </div>
   </body>
