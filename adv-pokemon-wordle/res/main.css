@@ -270,8 +270,8 @@ body {
     margin-bottom: 1em;
 }
 
-.twitter-share-button {
-    background-color: rgb(29, 155, 240);
+.result-button {
+    background-color: rgb(28, 156, 241);
     color: #ffffff;
     font-size: 1em;
     border-color: #ffffff;
@@ -282,7 +282,7 @@ body {
     padding: 8px 12px 8px 12px;
 }
 
-.twitter-share-button:hover {
+.result-button:hover {
     background-color: rgb(85, 177, 238)
 }
 

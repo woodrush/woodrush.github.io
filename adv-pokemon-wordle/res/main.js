@@ -258,14 +258,14 @@ function init() {
 
     document.getElementById("settings-key").addEventListener("click", clickSettings);
     document.getElementById("help-key").addEventListener("click", clickHelp);
-    document.getElementById("twitter-share-failed").addEventListener("click", function () {
+    document.getElementById("result-failed").addEventListener("click", function () {
         tweet_result("failed");
     });
-    document.getElementById("twitter-share-cleared").addEventListener("click", function () {
+    document.getElementById("result-cleared").addEventListener("click", function () {
         tweet_result("cleared");
     });
     document.getElementById("start-game-button").addEventListener("click", clickHelp);
-    document.getElementById("twitter-share-button").addEventListener("click", share_twitter);
+    document.getElementById("result-button").addEventListener("click", share_twitter);
     document.getElementById("set-nomessage-cookie-button").addEventListener("click", set_nomessage_cookie);
 
     document.getElementById("settings-link-1").addEventListener("click", clickSettings);
