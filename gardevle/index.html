@@ -1,0 +1,261 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta property="og:title" content="サーナイtle">
+    <meta property="og:locale" content="ja_JP">
+    <meta name="description" content="必ず正解がサーナイトになるポケモンWordle「サーナイtle」">
+    <meta property="og:description" content="必ず正解がサーナイトになるポケモンWordle「サーナイtle」">
+    <link rel="canonical" href="https://woodrush.github.io/gardevle/index.html">
+    <meta property="og:url" content="https://woodrush.github.io/gardevle/index.html">
+    <meta property="og:site_name" content="サーナイtle">
+    <meta property="og:image" content="https://woodrush.github.io/gardevle/res/thumbnail.png">
+    <meta property="og:type" content="game">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:image" content="https://woodrush.github.io/gardevle/res/thumbnail.png">
+    <meta property="twitter:title" content="サーナイtle">
+    <script type="application/ld+json">
+    {"description":"必ず正解がサーナイトになるポケモンWordle「サーナイtle」","@type":"Game","image":"https://woodrush.github.io/gardevle/res/thumbnail.png","headline":"サーナイtle","dateModified":"2022-02-04T19:00:35+09:00","datePublished":"2022-02-04T19:00:35+09:00","url":"https://woodrush.github.io/gardevle/","mainEntityOfPage":{"@type":"WebPage","@id":"https://woodrush.github.io/gardevle/index.html"},"@context":"https://schema.org"}</script>
+    <title>サーナイtle</title>
+    <script type="text/javascript" src="./res/pokedex.js"></script>
+    <script type="text/javascript" src="./res/main.js"></script>
+    <link href="./res/main.css" rel="stylesheet">
+  </head>
+  <body onLoad="init()">
+    <div class="title-container">
+      <div class="title"><span><b>サーナイtle</b></span></div>
+    </div>
+    <div>
+      <div style="text-align:center">
+        必ず正解がサーナイトなポケモンWordle
+      </div>
+    </div>
+    <div class="ultrahard-container" id="ultrahard-container" style="display:none;">
+      <div class="ultrahard-body">
+        ウルトラハードモード：<br>
+        正解が<b><span class="ultrahard-goal">サーナイト</span></b>となるように回答して下さい。
+      </div>
+    </div>
+    <div id="game-container">
+      <div class="board-container">
+        <table class="board" align="center">
+          <tbody id="board">
+            <tr>
+              <td id="box-0-0" class="box-base box-empty"></td>
+              <td id="box-0-1" class="box-base box-empty"></td>
+              <td id="box-0-2" class="box-base box-empty"></td>
+              <td id="box-0-3" class="box-base box-empty"></td>
+              <td id="box-0-4" class="box-base box-empty"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ultrahard-fail-container" id="ultrahard-fail-container" style="display:none;">
+        <div class="ultrahard-fail-body">
+          <div class="fail-message">
+            <b>残念！</b>
+          </div>
+          <div class="fail-message-2">
+            お題のポケモン<b><span class="ultrahard-goal"></span></b>は正解候補からいなくなってしまいました…
+          </div>
+          <button class="result-button" id="result-failed">結果をツイートする</button>
+        </div>
+      </div>
+      <div class="result-container" id="result-container" style="display:none;">
+          <div class="result">
+            <b><span class="clear-message">クリア！</span></b><br>
+            <div class="result-message">
+              サーナイtle<span id="result-ultrahard-message" style="display:none;">の<b><span style="color:#EA5639">ウルトラハードモード</span></b></span>を<br>
+              <b><span id="result-turns"></span></b>手でクリアしました！<br>
+              おめでとうございます！
+            </div>
+            <button class="result-button" id="result-cleared">結果をツイートする</button>
+          </div>
+      </div>
+      <div class="keyboard-container">
+        <div class="keyboard">
+          <div class="row">
+            <input type="text" class="input-text" id="input_text" onkeydown="textbox_onkey">
+          </div>
+          <div id="keyboard-0">
+              <div class="row">
+              <button key="ワ" class="key" onClick="onClickKey(this);"><b>ワ</b></button>
+              <button key="ラ" class="key" onClick="onClickKey(this);"><b>ラ</b></button>
+              <button key="ヤ" class="key" onClick="onClickKey(this);"><b>ヤ</b></button>
+              <button key="マ" class="key" onClick="onClickKey(this);"><b>マ</b></button>
+              <button key="ハ" class="key" onClick="onClickKey(this);"><b>ハ</b></button>
+              <button key="ナ" class="key" onClick="onClickKey(this);"><b>ナ</b></button>
+              <button key="タ" class="key" onClick="onClickKey(this);"><b>タ</b></button>
+              <button key="サ" class="key" onClick="onClickKey(this);"><b>サ</b></button>
+              <button key="カ" class="key" onClick="onClickKey(this);"><b>カ</b></button>
+              <button key="ア" class="key" onClick="onClickKey(this);"><b>ア</b></button>
+            </div>
+            <div class="row">
+              <button class="key invisible">.</button>
+              <button key="リ" class="key" onClick="onClickKey(this);"><b>リ</b></button>
+              <button class="key invisible">.</button>
+              <button key="ミ" class="key" onClick="onClickKey(this);"><b>ミ</b></button>
+              <button key="ヒ" class="key" onClick="onClickKey(this);"><b>ヒ</b></button>
+              <button key="ニ" class="key" onClick="onClickKey(this);"><b>ニ</b></button>
+              <button key="チ" class="key" onClick="onClickKey(this);"><b>チ</b></button>
+              <button key="シ" class="key" onClick="onClickKey(this);"><b>シ</b></button>
+              <button key="キ" class="key" onClick="onClickKey(this);"><b>キ</b></button>
+              <button key="イ" class="key" onClick="onClickKey(this);"><b>イ</b></button>
+            </div>
+            <div class="row">
+              <!-- <button key="ヲ" class="key" onClick="onClickKey(this);"><b>ヲ</b></button> -->
+              <button key="ー" class="key" onClick="onClickKey(this);"><b>ー</b></button>
+              <button key="ル" class="key" onClick="onClickKey(this);"><b>ル</b></button>
+              <button key="ユ" class="key" onClick="onClickKey(this);"><b>ユ</b></button>
+              <button key="ム" class="key" onClick="onClickKey(this);"><b>ム</b></button>
+              <button key="フ" class="key" onClick="onClickKey(this);"><b>フ</b></button>
+              <button key="ヌ" class="key" onClick="onClickKey(this);"><b>ヌ</b></button>
+              <button key="ツ" class="key" onClick="onClickKey(this);"><b>ツ</b></button>
+              <button key="ス" class="key" onClick="onClickKey(this);"><b>ス</b></button>
+              <button key="ク" class="key" onClick="onClickKey(this);"><b>ク</b></button>
+              <button key="ウ" class="key" onClick="onClickKey(this);"><b>ウ</b></button>
+              </div>
+            <div class="row">
+              <button class="key invisible">.</button>
+              <button key="レ" class="key" onClick="onClickKey(this);"><b>レ</b></button>
+              <button class="key invisible">.</button>
+              <button key="メ" class="key" onClick="onClickKey(this);"><b>メ</b></button>
+              <button key="ヘ" class="key" onClick="onClickKey(this);"><b>ヘ</b></button>
+              <button key="ネ" class="key" onClick="onClickKey(this);"><b>ネ</b></button>
+              <button key="テ" class="key" onClick="onClickKey(this);"><b>テ</b></button>
+              <button key="セ" class="key" onClick="onClickKey(this);"><b>セ</b></button>
+              <button key="ケ" class="key" onClick="onClickKey(this);"><b>ケ</b></button>
+              <button key="エ" class="key" onClick="onClickKey(this);"><b>エ</b></button>
+            </div>
+            <div class="row">
+              <button key="ン" class="key" onClick="onClickKey(this);"><b>ン</b></button>
+              <button key="ロ" class="key" onClick="onClickKey(this);"><b>ロ</b></button>
+              <button key="ヨ" class="key" onClick="onClickKey(this);"><b>ヨ</b></button>
+              <button key="モ" class="key" onClick="onClickKey(this);"><b>モ</b></button>
+              <button key="ホ" class="key" onClick="onClickKey(this);"><b>ホ</b></button>
+              <button key="ノ" class="key" onClick="onClickKey(this);"><b>ノ</b></button>
+              <button key="ト" class="key" onClick="onClickKey(this);"><b>ト</b></button>
+              <button key="ソ" class="key" onClick="onClickKey(this);"><b>ソ</b></button>
+              <button key="コ" class="key" onClick="onClickKey(this);"><b>コ</b></button>
+              <button key="オ" class="key" onClick="onClickKey(this);"><b>オ</b></button>
+            </div>
+          </div>
+          <div id="keyboard-1" style="display:none">
+            <div class="row">
+              <button key="ャ" class="key" onClick="onClickKey(this);"><b>ャ</b></button>
+              <button key="パ" class="key" onClick="onClickKey(this);"><b>パ</b></button>
+              <button key="バ" class="key" onClick="onClickKey(this);"><b>バ</b></button>
+              <button class="key invisible">.</button>
+              <button key="ダ" class="key" onClick="onClickKey(this);"><b>ダ</b></button>
+              <button key="ザ" class="key" onClick="onClickKey(this);"><b>ザ</b></button>
+              <button key="ガ" class="key" onClick="onClickKey(this);"><b>ガ</b></button>
+              <button key="ァ" class="key" onClick="onClickKey(this);"><b>ァ</b></button>
+            </div>
+            <div class="row">
+              <button class="key invisible">.</button>
+              <button key="ピ" class="key" onClick="onClickKey(this);"><b>ピ</b></button>
+              <button key="ビ" class="key" onClick="onClickKey(this);"><b>ビ</b></button>
+              <button class="key invisible">.</button>
+              <button key="ヂ" class="key" onClick="onClickKey(this);"><b>ヂ</b></button>
+              <button key="ジ" class="key" onClick="onClickKey(this);"><b>ジ</b></button>
+              <button key="ギ" class="key" onClick="onClickKey(this);"><b>ギ</b></button>
+              <button key="ィ" class="key" onClick="onClickKey(this);"><b>ィ</b></button>
+            </div>
+            <div class="row">
+              <button key="ュ" class="key" onClick="onClickKey(this);"><b>ュ</b></button>
+              <button key="プ" class="key" onClick="onClickKey(this);"><b>プ</b></button>
+              <button key="ブ" class="key" onClick="onClickKey(this);"><b>ブ</b></button>
+              <button key="ッ" class="key" onClick="onClickKey(this);"><b>ッ</b></button>
+              <button key="ヅ" class="key" onClick="onClickKey(this);"><b>ヅ</b></button>
+              <button key="ズ" class="key" onClick="onClickKey(this);"><b>ズ</b></button>
+              <button key="グ" class="key" onClick="onClickKey(this);"><b>グ</b></button>
+              <button key="ゥ" class="key" onClick="onClickKey(this);"><b>ゥ</b></button>
+            </div>
+            <div class="row">
+              <button class="key invisible">.</button>
+              <button key="ペ" class="key" onClick="onClickKey(this);"><b>ペ</b></button>
+              <button key="ベ" class="key" onClick="onClickKey(this);"><b>ベ</b></button>
+              <button class="key invisible">.</button>
+              <button key="デ" class="key" onClick="onClickKey(this);"><b>デ</b></button>
+              <button key="ゼ" class="key" onClick="onClickKey(this);"><b>ゼ</b></button>
+              <button key="ゲ" class="key" onClick="onClickKey(this);"><b>ゲ</b></button>
+              <button key="ェ" class="key" onClick="onClickKey(this);"><b>ェ</b></button>
+            </div>
+            <div class="row">
+              <button key="ョ" class="key" onClick="onClickKey(this);"><b>ョ</b></button>
+              <button key="ポ" class="key" onClick="onClickKey(this);"><b>ポ</b></button>
+              <button key="ボ" class="key" onClick="onClickKey(this);"><b>ボ</b></button>
+              <button class="key invisible">.</button>
+              <button key="ド" class="key" onClick="onClickKey(this);"><b>ド</b></button>
+              <button key="ゾ" class="key" onClick="onClickKey(this);"><b>ゾ</b></button>
+              <button key="ゴ" class="key" onClick="onClickKey(this);"><b>ゴ</b></button>
+              <button key="ォ" class="key" onClick="onClickKey(this);"><b>ォ</b></button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="enter-button-row">
+              <button key="enter" class="enter-key" onClick="onClickKey(this);"><b>Enter</b></button>
+              <button key="toggle" class="toggle-key" id="toggle-key"><b>通常 ↔ ゛゜小</b></button>
+              <button key="bs" class="bs-key" onClick="onClickKey(this);"><b><span class="bs">⌫</span></b></button>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="margin-top: 2em;">
+          <button class="settings-key" id="settings-key"><b>設定</b></button>
+          <button class="help-key" id="help-key"><b>？</b></button>
+        </div>
+      </div>
+    </div>
+    <div id="help-container" style="display:none;">
+      <div class="help-body">
+        サーナイtleは、ポケモンWordleと全く同じルールなのですが正解が必ずサーナイトになっているゲームです。<br>
+        <br>
+        <div class="subtitle">ルール</div>
+        <hr>
+        <ul class="rule-ul">
+          <li>
+            回答として使えるのはソード・シールドまでに登場する5文字<b>以内</b>の全てのポケモンです。
+          </li>
+          <li>
+            好きな回数だけポケモンの名前を予想することができます。
+          </li>
+        </ul>
+        あなたは隠されたポケモンの名前を当て、正解に辿り着くことができるでしょうか？<br>
+        <br>
+        <button class="start-game-button" id="start-game-button">ゲームをはじめる</button><br>
+        <br>
+        <br>
+        <div class="subtitle">その他</div>
+        <hr>
+        姉妹作品として<a href="https://woodrush.github.io/adv-pokemon-wordle/">後出しポケモンWordle</a>というゲームも作っています。<br>
+        <br>
+        <button class="result-button" id="result-button">twitterでシェアする</button><br>
+        <br>
+        このゲームは<a href="https://twitter.com/mikeodyllan">Mike O</a>さん作の必ず答えがHorseになるWordleのクローンゲーム<a href="https://twitter.com/mikeodyllan/status/1484230440068210693">Horsle</a>から着想を得ています。
+        また、<a href="https://powerlanguage.co.uk/">Josh Wardle</a>さん作の<a href="https://www.powerlanguage.co.uk/wordle/">Wordle</a>および<a href="https://twitter.com/giga_yadoran">やど</a>さん作の<a href="https://wordle.mega-yadoran.jp/">ポケモンWordle</a>が原作となっています。<br>
+        <br>
+        作者：<a href="https://twitter.com/woodrush924/">Woodrush</a>
+      </div>
+    </div>
+    <div id="settings-container" style="display:none;">
+      <div class="settings-body">
+        モード設定<br>
+        <div>
+          <table>
+            <tr>
+              <td class="settings-td"><input type="checkbox" id="check-hard"></td>
+              <td class="settings-td">
+                ハードモード：これまでに得られたヒントに合致するポケモンのみを回答に使用することができるモードです。
+              </td>
+            </tr>
+          </table>
+        </div>
+        <br>
+        <br>
+        その他の設定<br>
+        <br>
+        <button class="basic-button" id="settings-to-game-button">ゲームに戻る</button>
+      </div>
+    </div>
+  </body>
+</html>
