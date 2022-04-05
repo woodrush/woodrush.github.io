@@ -137,6 +137,8 @@ To answer this, I created a fork of SectorLISP that supports two new special for
 
 <p>The fork is available here: <a href="https://github.com/woodrush/sectorlisp/tree/io">https://github.com/woodrush/sectorlisp/tree/io</a></p>
 
+<p><strong>Update (2022/4/6):</strong> The fork was merged into the original SectorLISP repository. Thanks for reviewing and merging it!</p>
+
 <p>Adding all of these features only amounted to an extra 35 bytes of the binary,
 with a total of 469 bytes, or 471 bytes including the boot signature.
 This is still 22 bytes or more smaller than the two former champions of minimal languages that fit in a boot sector mentioned in the <a href="https://justine.lol/sectorlisp2/">SectorLISP blog post</a>,
@@ -159,6 +161,10 @@ The details of the assembly optimizations including the one used in this pull re
 git checkout io
 make
 </code></pre></div></div>
+
+<p><strong>Update (2022/4/6):</strong> Since the fork was merged into the original SectorLISP repository,
+you could now checkout <a href="https://github.com/woodrush/sectorlisp">https://github.com/jart/sectorlisp</a>
+instead for using these features.</p>
 
 <p>This will generate <code class="language-html highlighter-rouge">sectorlisp.bin</code> under <code class="language-html highlighter-rouge">./sectorlisp</code>.</p>
 
@@ -541,6 +547,7 @@ can still be limited to an amount less by 22 bytes or more compared with the oth
       <li><strong>Update:</strong> As mentioned earlier, a pull request from <a href="https://github.com/jart">@jart</a> has allowed us to
 bring down the total program size to 465 bytes or 467 bytes including the boot signature.
 Thank you @jart for your contribution!</li>
+      <li><strong>Update (2022/4/6):</strong> The fork was merged into the original SectorLISP repo. Thanks for reviewing and merging it!</li>
     </ul>
   </li>
 </ul>
