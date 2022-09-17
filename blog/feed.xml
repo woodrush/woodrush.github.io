@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-09-18T06:02:13+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">LambdaLisp - A Lisp Interpreter That Runs on Lambda Calculus</title><link href="https://woodrush.github.io/blog/lambdalisp.html" rel="alternate" type="text/html" title="LambdaLisp - A Lisp Interpreter That Runs on Lambda Calculus" /><published>2022-09-17T23:00:00+09:00</published><updated>2022-09-17T23:00:00+09:00</updated><id>https://woodrush.github.io/blog/lambdalisp</id><content type="html" xml:base="https://woodrush.github.io/blog/lambdalisp.html"><![CDATA[<div align="center">
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-09-18T09:30:52+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">LambdaLisp - A Lisp Interpreter That Runs on Lambda Calculus</title><link href="https://woodrush.github.io/blog/lambdalisp.html" rel="alternate" type="text/html" title="LambdaLisp - A Lisp Interpreter That Runs on Lambda Calculus" /><published>2022-09-17T23:00:00+09:00</published><updated>2022-09-17T23:00:00+09:00</updated><id>https://woodrush.github.io/blog/lambdalisp</id><content type="html" xml:base="https://woodrush.github.io/blog/lambdalisp.html"><![CDATA[<div align="center">
 <a href="/blog/assets/posts/2022-09-17/lambdalisp_logo.png">
   <img src="/blog/assets/posts/2022-09-17/lambdalisp_logo.png" alt="LambdaLisp - A Lisp Interpreter Written as an Untyped Lambda Calculus Term" style="margin-bottom: 50px; margin-top: 50px;" />
 </a>
@@ -434,7 +434,7 @@ the interpreter automatically encodes the input bytestream to lambda terms, perf
 parses the output lambda term as a list of bits, and prints the output as a string in the terminal.</p>
 
 <p>The differences in BLC and UL are in a slight difference in the method for encoding the I/O.
-Otherwise, both of these languages follow the same principle, where lambda terms are the solely avalable object types in the language.</p>
+Otherwise, both of these languages follow the same principle, where lambda terms are the solely available object types in the language.</p>
 
 <p>In BLC and UL, lambda terms are written in a notation called <a href="https://tromp.github.io/cl/Binary_lambda_calculus.html">binary lambda calculus</a>.
 Details on the BLC notation is described in the Appendix.</p>
@@ -1772,7 +1772,7 @@ It is therefore convenient to use as much macros as possible when writing progra
 since using macros can be seen as running compile-time beta reductions beforehand of the runtime.
 For example, while <code class="language-html highlighter-rouge">cons</code> can be written as a function <code class="language-html highlighter-rouge">(defun-lazy cons (x y) (lambda (f) (f x y)))</code>,
 it can also be written as a macro <code class="language-html highlighter-rouge">(defmacro-lazy cons (x y) `(lambda (f) ,x ,y))</code>,
-which is the beta-reduced form of the funciton-based definition.
+which is the beta-reduced form of the function-based definition.
 Either code will evaluate the same results by writing <code class="language-html highlighter-rouge">(cons p q)</code>,
 except the function-based one requires an extra beta-reduction step at runtime, affecting the performance.</p>
 
