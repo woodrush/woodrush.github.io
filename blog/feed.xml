@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-09-18T09:30:52+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">LambdaLisp - A Lisp Interpreter That Runs on Lambda Calculus</title><link href="https://woodrush.github.io/blog/lambdalisp.html" rel="alternate" type="text/html" title="LambdaLisp - A Lisp Interpreter That Runs on Lambda Calculus" /><published>2022-09-17T23:00:00+09:00</published><updated>2022-09-17T23:00:00+09:00</updated><id>https://woodrush.github.io/blog/lambdalisp</id><content type="html" xml:base="https://woodrush.github.io/blog/lambdalisp.html"><![CDATA[<div align="center">
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://woodrush.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://woodrush.github.io/blog/" rel="alternate" type="text/html" /><updated>2022-09-19T02:52:21+09:00</updated><id>https://woodrush.github.io/blog/feed.xml</id><title type="html">Woodrush’s Blog</title><subtitle>A blog written by Hikaru Ikuta.</subtitle><entry><title type="html">LambdaLisp - A Lisp Interpreter That Runs on Lambda Calculus</title><link href="https://woodrush.github.io/blog/lambdalisp.html" rel="alternate" type="text/html" title="LambdaLisp - A Lisp Interpreter That Runs on Lambda Calculus" /><published>2022-09-17T23:00:00+09:00</published><updated>2022-09-17T23:00:00+09:00</updated><id>https://woodrush.github.io/blog/lambdalisp</id><content type="html" xml:base="https://woodrush.github.io/blog/lambdalisp.html"><![CDATA[<div align="center">
 <a href="/blog/assets/posts/2022-09-17/lambdalisp_logo.png">
   <img src="/blog/assets/posts/2022-09-17/lambdalisp_logo.png" alt="LambdaLisp - A Lisp Interpreter Written as an Untyped Lambda Calculus Term" style="margin-bottom: 50px; margin-top: 50px;" />
 </a>
@@ -45,6 +45,10 @@ Execution speed is fast as well, and the <a href="https://github.com/woodrush/la
 
 <p><span class="pdf_no_preview">The embedded PDF may not show on mobile.</span>
 The same PDF is also available at <a href="https://woodrush.github.io/lambdalisp.pdf">https://woodrush.github.io/lambdalisp.pdf</a>.</p>
+
+<p>Page 32 is particulary interesting, consisting entirely of <code class="language-html highlighter-rouge">(</code>s:</p>
+
+<p><a href="/blog/assets/posts/2022-09-17/pdf_32.png"><img src="/blog/assets/posts/2022-09-17/pdf_32.png" alt="p.32 of lambdalisp.pdf." /></a></p>
 
 <h2 class="no_toc" id="overview">Overview</h2>
 
